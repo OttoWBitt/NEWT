@@ -1,0 +1,23 @@
+version: "3.7"
+services:
+  mariadb:
+    image: mariadb:10.5.9
+    #restart: always
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: asdfg321
+    ports:
+      - "3306:3306"
+   
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.1.0
+    #restart: always
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: root
+      PMA_PASSWORD: asdfg321
+    ports:
+      - "8080:80"
+volumes:
+  mariadb-data:
