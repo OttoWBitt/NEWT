@@ -5,18 +5,25 @@ build:
 	docker build . -t newt
 
 run:
-	docker run -d --name newt_backend -p 3000:3000 -e MYSQL="${mysql}" --entrypoint ./Newt newt
+	docker run -d --name newt_backend --network="host" -p 3000:3000 -e MYSQL="${mysql}" --entrypoint ./Newt newt
 
 remove-containers:
 	@docker container rm newt_backend -f ||true
+	@docker rmi $$(docker images --filter "dangling=true" -q --no-trunc) ||true
 
 compose:
 	docker-compose up -d
 
-build-and-run: compose remove-containers build run
+build-and-run: remove-containers build run
+
+build-and-run-all: compose remove-containers build run
 
 stop-containers:
 	@docker stop newt_backend ||true
 	@docker stop --time=5 newt_phpmyadmin_1 ||true
 	@docker stop newt_mariadb_1 ||true
 	docker-compose down
+	@docker rmi $$(docker images --filter "dangling=true" -q --no-trunc) ||true
+
+remove-dangling:
+	@docker rmi $(docker images --filter "dangling=true" -q --no-trunc) ||true
