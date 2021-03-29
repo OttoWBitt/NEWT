@@ -16,5 +16,6 @@ RUN echo 'America/Sao_Paulo' > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata
 COPY /html /app/html
 COPY --from=builder /app/Newt /app/Newt
+RUN mkdir app/files
 WORKDIR /app
 ENTRYPOINT ["./Newt"]

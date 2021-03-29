@@ -5,7 +5,8 @@ build:
 	docker build . -t newt
 
 run:
-	docker run -d --name newt_backend --network="host" -p 3000:3000 -e MYSQL="${mysql}" --entrypoint ./Newt newt
+	@mkdir files ||true
+	docker run -d --name newt_backend -v ~/NEWT/files:/app/files --network="host" -p 3000:3000 -e MYSQL="${mysql}" --entrypoint ./Newt newt
 
 remove-containers:
 	@docker container rm newt_backend -f ||true
