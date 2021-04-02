@@ -34,14 +34,17 @@ func main() {
 
 	http.HandleFunc("/signup", signupPage)
 	http.HandleFunc("/login", loginPage)
+	http.HandleFunc("/recover", recoverPassword)
+	http.HandleFunc("/reset", resetPassword)
 
 	http.HandleFunc("/link", insertLinks)
 	http.HandleFunc("/link/recover", retrieveLinks)
 
-	http.HandleFunc("/send", sendEmail)
-
 	http.HandleFunc("/fetch/files", fetchFiles)
 	http.HandleFunc("/fetch/files/id", fetchFilesByID)
+	http.HandleFunc("/fetch/links", fetchLinks)
+	http.HandleFunc("/fetch/links/id", fetchLinkByID)
+	http.HandleFunc("/fetch/getAllUser", fetchAllByUser)
 
 	http.HandleFunc("/", homePage)
 

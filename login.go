@@ -133,3 +133,66 @@ func loginPage(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 	res.Write(jsonData)
 }
+
+func recoverPassword(res http.ResponseWriter, req *http.Request) {
+	if req.Method != "POST" {
+		http.ServeFile(res, req, "html/recover.html")
+		return
+	}
+
+	email := req.FormValue("email")
+
+	id, err := getUserIDByEmail(email)
+	if err != nil {
+		return
+	}
+
+	encID := encodeToString(id)
+
+	erro := sendEmail(encID, email)
+	if erro != nil {
+		renderError(res, "Error sending email", http.StatusInternalServerError)
+	}
+	res.Write([]byte("SUCCESS"))
+}
+
+func resetPassword(res http.ResponseWriter, req *http.Request) {
+	if req.Method != "POST" {
+		http.ServeFile(res, req, "html/reset.html")
+		return
+	}
+
+	id := req.FormValue("id")
+	if id == "" {
+		renderError(res, "No recovery code", http.StatusInternalServerError)
+	}
+
+	decID, err := decodeString(id)
+	if err != nil {
+		renderError(res, "Could not decrypt", http.StatusInternalServerError)
+	}
+
+	password := req.FormValue("password")
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		renderError(res, "Server error, unable to create your account.", http.StatusInternalServerError)
+		return
+	}
+
+	_, err = dbMaster.Exec(
+		`UPDATE
+			newt.users
+		SET 
+			password = ?
+		WHERE
+			id = ?
+	`, hashedPassword, decID)
+
+	if err != nil {
+		http.Error(res, "Server error, unable to update your password.", http.StatusInternalServerError)
+		return
+	}
+
+	res.Write([]byte("Password Updated!"))
+}
