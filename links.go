@@ -16,15 +16,15 @@ func insertLinks(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	id := req.FormValue("id")
+	stringId := req.FormValue("id")
 	link := req.FormValue("link")
 
-	i, err := strconv.Atoi(id)
+	id, err := strconv.Atoi(stringId)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 	}
 
-	auth := userExists(i)
+	auth := userExists(id)
 
 	fmt.Println(auth) //esse cara tem que vir do cookie do front, falta implementar
 
