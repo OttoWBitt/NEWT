@@ -3,28 +3,33 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
-	"net/http"
 
 	gomail "gopkg.in/mail.v2"
 )
 
-func sendEmail(res http.ResponseWriter, req *http.Request) {
+func sendEmail(id string, email string) error {
 	m := gomail.NewMessage()
 
+	emailAcc := "newtrecovery@gmail.com"
+
 	// Set E-Mail sender
-	m.SetHeader("From", "otto12.bittencourt@gmail.com")
+	m.SetHeader("From", emailAcc)
 
 	// Set E-Mail receivers
-	m.SetHeader("To", "ottowbittencourt@gmail.com")
+	m.SetHeader("To", email)
 
 	// Set E-Mail subject
-	m.SetHeader("Subject", "Gomail test subject")
+	m.SetHeader("Subject", "NEWT Password recovery")
+
+	baseRecoverURL := "http://localhost:3000/reset"
+	var text string = "Por favor, use o codigo '%s' para poder resetar sua senha em %s"
+	recover := fmt.Sprintf(text, id, baseRecoverURL)
 
 	// Set E-Mail body. You can set plain text or html with text/html
-	m.SetBody("text/plain", "This is Gomail test body")
+	m.SetBody("text/plain", recover)
 
 	// Settings for SMTP server
-	d := gomail.NewDialer("smtp.gmail.com", 587, "otto12.bittencourt@gmail.com", "ojfvgpifvusduukm")
+	d := gomail.NewDialer("smtp.gmail.com", 587, emailAcc, "zsvnjemrzrnnrmty")
 
 	// This is only needed when SSL/TLS certificate is not valid on server.
 	// In production this should be set to false.
@@ -32,7 +37,7 @@ func sendEmail(res http.ResponseWriter, req *http.Request) {
 
 	// Now send E-Mail
 	if err := d.DialAndSend(m); err != nil {
-		fmt.Println(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
