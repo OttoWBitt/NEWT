@@ -26,15 +26,25 @@ func main() {
 
 	dataBaseMaster(os.Getenv("MYSQL"))
 
-	http.HandleFunc("/upload", uploadFileHandler()) //TODO: verificar user do upload, permissoes, salvar nome na base de dados pra fazer dwld dps
+	http.HandleFunc("/upload", uploadFileHandler())
+	http.HandleFunc("/download", download)
+
 	fs := http.FileServer(http.Dir(uploadPath))
 	http.Handle("/files/", http.StripPrefix("/files", fs))
 
-	http.HandleFunc("/", homePage)
 	http.HandleFunc("/signup", signupPage)
 	http.HandleFunc("/login", loginPage)
+
 	http.HandleFunc("/link", insertLinks)
 	http.HandleFunc("/link/recover", retrieveLinks)
+
+	http.HandleFunc("/send", sendEmail)
+
+	http.HandleFunc("/fetch/files", fetchFiles)
+	http.HandleFunc("/fetch/files/id", fetchFilesByID)
+
+	http.HandleFunc("/", homePage)
+
 	http.ListenAndServe(":3000", nil)
 
 	defer dbMaster.Close()
