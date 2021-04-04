@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -195,4 +196,82 @@ func resetPassword(res http.ResponseWriter, req *http.Request) {
 	}
 
 	res.Write([]byte("Password Updated!"))
+}
+
+type inputData struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func jsonLoginPage(res http.ResponseWriter, req *http.Request) {
+	if req.Method == "POST" {
+
+		const theCase = "original"
+
+		//data json
+		data, erro := ioutil.ReadAll(req.Body)
+		if erro != nil {
+			renderError(res, erro.Error(), http.StatusInternalServerError)
+		}
+
+		var info inputData
+
+		if erro = json.Unmarshal(data, &info); erro != nil {
+			renderError(res, erro.Error(), http.StatusInternalServerError)
+		}
+
+		email := info.Email
+		password := info.Password
+
+		var databasePassword string
+
+		err := dbMaster.QueryRow(
+			`SELECT
+				password
+			FROM 
+				newt.users 
+			WHERE email = ?
+		`, email).Scan(&databasePassword)
+
+		if err != nil {
+			renderError(res, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(databasePassword), []byte(password))
+		if err != nil {
+			renderError(res, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		const query = `
+		SELECT
+			username, 
+			name,
+			email,
+			phone
+		FROM 
+			newt.users 
+		WHERE email = "%s"
+`
+
+		userQuery := fmt.Sprintf(query, email)
+		user, err := gosqljson.QueryDbToMap(dbMaster, theCase, userQuery)
+		if err != nil {
+			renderError(res, err.Error(), http.StatusInternalServerError)
+		}
+
+		generateJSON := map[string]interface{}{
+			"user": user,
+		}
+
+		jsonData, err := json.Marshal(generateJSON)
+
+		if err != nil {
+			renderError(res, err.Error(), http.StatusInternalServerError)
+		}
+
+		res.Header().Set("Content-Type", "application/json")
+		res.Write(jsonData)
+	}
 }
