@@ -91,7 +91,7 @@ func uploadFileHandler() http.HandlerFunc {
 		fileName := filepath.Join(uploadPath, fileNameToken+fileEndings[0])
 		fmt.Printf("FileType: %s, File: %s\n", detectedFileType, fileName)
 
-		const dns = "http://localhost:3000/%s"
+		const dns = "http://localhost:3001/%s"
 		url := fmt.Sprintf(dns, fileName)
 
 		erro := saveFileMetadata(fileHeader.Filename, url, userID, subject)

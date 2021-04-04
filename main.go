@@ -7,6 +7,7 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/rs/cors"
 )
 
 var dbMaster *sql.DB
@@ -25,30 +26,36 @@ func dataBaseMaster(dsn string) {
 func main() {
 
 	dataBaseMaster(os.Getenv("MYSQL"))
+	mux := http.NewServeMux()
 
-	http.HandleFunc("/upload", uploadFileHandler())
-	http.HandleFunc("/download", download)
+	mux.HandleFunc("/upload", uploadFileHandler())
+	mux.HandleFunc("/download", download)
 
 	fs := http.FileServer(http.Dir(uploadPath))
-	http.Handle("/files/", http.StripPrefix("/files", fs))
+	mux.Handle("/files/", http.StripPrefix("/files", fs))
 
-	http.HandleFunc("/signup", signupPage)
-	http.HandleFunc("/login", loginPage)
-	http.HandleFunc("/recover", recoverPassword)
-	http.HandleFunc("/reset", resetPassword)
+	mux.HandleFunc("/signup", signupPage)
+	mux.HandleFunc("/login", loginPage)
+	mux.HandleFunc("/recover", recoverPassword)
+	mux.HandleFunc("/reset", resetPassword)
 
-	http.HandleFunc("/link", insertLinks)
-	http.HandleFunc("/link/recover", retrieveLinks)
+	mux.HandleFunc("/link", insertLinks)
+	mux.HandleFunc("/link/recover", retrieveLinks)
 
-	http.HandleFunc("/fetch/files", fetchFiles)
-	http.HandleFunc("/fetch/files/id", fetchFilesByID)
-	http.HandleFunc("/fetch/links", fetchLinks)
-	http.HandleFunc("/fetch/links/id", fetchLinkByID)
-	http.HandleFunc("/fetch/getAllUser", fetchAllByUser)
+	mux.HandleFunc("/fetch/files", fetchFiles)
+	mux.HandleFunc("/fetch/files/id", fetchFilesByID)
+	mux.HandleFunc("/fetch/links", fetchLinks)
+	mux.HandleFunc("/fetch/links/id", fetchLinkByID)
+	mux.HandleFunc("/fetch/getAllUser", fetchAllByUser)
 
-	http.HandleFunc("/", homePage)
+	mux.HandleFunc("/", homePage)
 
-	http.ListenAndServe(":3000", nil)
+	//kaka
+	mux.HandleFunc("/api/login", jsonLoginPage)
+
+	//default functions
+	handler := cors.Default().Handler(mux)
+	http.ListenAndServe(":3001", handler)
 
 	defer dbMaster.Close()
 
