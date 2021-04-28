@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/OttoWBitt/NEWT/jwt"
 	"github.com/elgs/gosqljson"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -71,6 +72,13 @@ func signupPage(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+type userInfo struct {
+	id       int
+	UserName string
+	Name     string
+	email    string
+}
+
 func loginPage(res http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" {
 		http.ServeFile(res, req, "html/login.html")
@@ -105,24 +113,50 @@ func loginPage(res http.ResponseWriter, req *http.Request) {
 
 	const query = `
 	SELECT
+		id,
 		username, 
 		name,
-		email,
-		phone
+		email
 	FROM 
 		newt.users 
 	WHERE username = "%s"
 `
 
 	userQuery := fmt.Sprintf(query, username)
-	user, err := gosqljson.QueryDbToMap(dbMaster, theCase, userQuery)
+
+	var user userInfo
+
+	err = dbMaster.QueryRow(userQuery).Scan(&user.id, &user.UserName, &user.Name, &user.email)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		http.Redirect(res, req, "/login", http.StatusBadRequest)
+		return
+	}
+
+	// user, err := gosqljson.QueryDbToMap(dbMaster, theCase, userQuery)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	jwtWrapper := jwt.JwtWrapper{
+		SecretKey:       "verysecretkey",
+		Issuer:          "AuthService",
+		ExpirationHours: 1,
+	}
+
+	signedToken, err := jwtWrapper.GenerateToken(user.email, user.UserName, user.Name, user.id)
+	if err != nil {
+		fmt.Println(err)
+		http.Redirect(res, req, "/login", http.StatusBadRequest)
+		return
 	}
 
 	generateJSON := map[string]interface{}{
-		"user": user,
+		//"user": user,
+		"token": signedToken,
 	}
+
+	decode(signedToken)
 
 	jsonData, err := json.Marshal(generateJSON)
 
@@ -133,6 +167,21 @@ func loginPage(res http.ResponseWriter, req *http.Request) {
 
 	res.Header().Set("Content-Type", "application/json")
 	res.Write(jsonData)
+}
+
+func decode(token string) {
+	jwtWrapper := jwt.JwtWrapper{
+		SecretKey: "verysecretkey",
+		Issuer:    "AuthService",
+	}
+
+	claims, err := jwtWrapper.ValidateToken(token)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(claims)
 }
 
 func recoverPassword(res http.ResponseWriter, req *http.Request) {
