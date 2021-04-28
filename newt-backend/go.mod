@@ -3,6 +3,7 @@ module github.com/OttoWBitt/NEWT
 go 1.16
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/elgs/gosqljson v0.0.0-20160403005647-027aa4915315
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/rs/cors v1.7.0

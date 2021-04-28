@@ -4,19 +4,22 @@ services:
     image: mariadb:10.5.9
     #restart: always
     volumes:
-      - mariadb-data:/var/lib/mysql
+      - ../dataBase:/var/lib/mysql
+      # - mariadb-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: asdfg321
     ports:
       - "3306:3306"
+    container_name: newt_mariadb
    
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.0
+    container_name: newt_phpmyadmin
     #restart: always
     environment:
       PMA_HOST: mariadb
-      PMA_USER: root
-      PMA_PASSWORD: asdfg321
+      #PMA_USER: root         //esses dois aqui são para quando o php não pede senha
+      #PMA_PASSWORD: asdfg321
     ports:
       - "8080:80"
 volumes:
