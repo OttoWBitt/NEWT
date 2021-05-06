@@ -34,10 +34,12 @@ func main() {
 	fs := http.FileServer(http.Dir(uploadPath))
 	mux.Handle("/files/", http.StripPrefix("/files", fs))
 
-	mux.HandleFunc("/signup", signupPage)
-	mux.HandleFunc("/login", loginPage)
-	mux.HandleFunc("/recover", recoverPassword)
-	mux.HandleFunc("/reset", resetPassword)
+	mux.HandleFunc("/api/signup", signupPage)
+	mux.HandleFunc("/api/login", login)
+	mux.HandleFunc("/api/recover", recoverPassword)
+	mux.HandleFunc("/api/reset", resetPassword)
+
+	mux.HandleFunc("/api/teste", testeBarros)
 
 	mux.HandleFunc("/link", insertLinks)
 	mux.HandleFunc("/link/recover", retrieveLinks)
@@ -49,9 +51,6 @@ func main() {
 	mux.HandleFunc("/fetch/getAllUser", fetchAllByUser)
 
 	mux.HandleFunc("/", homePage)
-
-	//kaka
-	mux.HandleFunc("/api/login", jsonLoginPage)
 
 	//default functions
 	handler := cors.Default().Handler(mux)
