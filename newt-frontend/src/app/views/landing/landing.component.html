@@ -1,17 +1,23 @@
 <div class="container" fxLayout fxLayoutAlign="space-around center">
-    <div class="panel" fxLayout="column" fxLayoutGap="5px">
-        <mat-form-field appearance="outline">
-            <mat-label>Usuário</mat-label>
-            <input matInput type="text">
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-            <mat-label>Senha</mat-label>
-            <input matInput type="password">
-        </mat-form-field>
-        <button mat-raised-button color="primary">ENTRAR</button>
+    <div class="panel" fxLayout="column" fxLayoutGap="15px">
+        <span class="title">
+            NEWT
+        </span>
+        <form [formGroup]="loginForm" (ngSubmit)="signIn()">
+            <div fxLayout="column" fxLayoutGap="15px">
+                <mat-form-field appearance="outline">
+                    <mat-label>Usuário</mat-label>
+                    <input matInput formControlName="username">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Senha</mat-label>
+                    <input matInput type="password" formControlName="password">
+                </mat-form-field>
+                <button mat-raised-button type="submit" color="primary">ENTRAR</button>
+            </div>
+        </form>
         <a (click)="passwordRecovery()">Esqueci minha senha</a>
         <mat-divider></mat-divider>
-        <button mat-stroked-button color="primary">REGISTRAR</button>
-
+        <button mat-stroked-button (click)="teste()" color="primary">REGISTRAR</button>
     </div>
 </div>

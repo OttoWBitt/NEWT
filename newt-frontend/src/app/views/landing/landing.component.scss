@@ -10,10 +10,18 @@
 .panel {
     background-color: #eaf5ff;
     border-radius: 8px;
-    padding: 16px 16px;
-
+    padding: 24px 20px;
+    min-width: 300px;
 }
 
 a {
     cursor: pointer;
+    font-size: 14px;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 26px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
 }
