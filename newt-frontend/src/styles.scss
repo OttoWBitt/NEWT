@@ -1,6 +1,12 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import '~roboto-fontface/css/roboto/roboto-fontface.css';
 
 /* You can add global styles to this file, and also import other style files */
 html { 
     background-color: #99d6df;
+    font-family: 'Roboto';
+}
+
+.mat-form-field-wrapper {
+    padding-bottom: 0 !important;
 }
