@@ -52,8 +52,13 @@ func main() {
 
 	mux.HandleFunc("/", homePage)
 
+	corsWrapper := cors.New(cors.Options{
+		AllowedMethods: []string{"GET", "POST"},
+		AllowedHeaders: []string{"Content-Type", "Origin", "Accept", "*", "Access-Control-Allow-Origin"},
+	})
+
 	//default functions
-	handler := cors.Default().Handler(mux)
+	handler := corsWrapper.Handler(mux)
 	http.ListenAndServe(":3001", handler)
 
 	defer dbMaster.Close()
