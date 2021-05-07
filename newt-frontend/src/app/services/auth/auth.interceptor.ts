@@ -24,10 +24,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(tap((ev: HttpEvent<any>) => {
       if (ev instanceof HttpResponse) {
-        if (request.url.endsWith('/signin') && request.method === 'POST' && ev.body && ev.body.data) {
-          localStorage.setItem('currentUser', JSON.stringify(ev.body.data));
-        } else if (request.url.indexOf('refresh-token') != -1 && ev.body.data){
-          localStorage.setItem('currentUser', JSON.stringify(ev.body.data));
+        if (request.url.endsWith('/login') && request.method === 'POST' && ev.body) {
+          localStorage.setItem('currentUser', JSON.stringify(ev.body));
         }
       }
     }, (error: any) => {

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LoginService } from 'src/app/services/views/login.service';
+import { Views } from 'src/app/util/views.enum';
 
 @Component({
   selector: 'newt-landing',
@@ -13,6 +15,7 @@ export class LandingComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
+    private router: Router,
     private loginService: LoginService,
   ) { }
 
@@ -27,23 +30,16 @@ export class LandingComponent implements OnInit {
     });
   }
 
-  teste(){
-    this.loginService.check().subscribe(r=>{
-      console.log(r)
-    })
-  }
-
   signIn(){
     let formData = this.loginForm.getRawValue()
     this.loginService.login(formData.username, formData.password).subscribe(
       (response)=>{
-        console.log('Login successful')
+        this.router.navigate([Views.artifacts.url])
       },
       (error)=>{
         console.log(error)
       }
     )
-    console.log(formData)
   }
 
   passwordRecovery(){

@@ -21,15 +21,6 @@ export class LoginService {
       }));
   }
 
-  check(): Observable<any> {
-    return this.httpClient.get<Response>(`${Constants.BASE_URL}teste`)
-    .pipe(
-      map((response: any) => {
-        const user = response;
-        return user;
-      }));
-  }
-
   private getHeaders(): HttpHeaders {
     const headers = new HttpHeaders({'content-type': 'application/json', accept: 'application/json'});
     return headers;
