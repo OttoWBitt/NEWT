@@ -5,4 +5,9 @@ export class Views{
         url: 'artefatos'
     };
 
+    public static login = {
+        name: 'Login',
+        url: 'login'
+    };
+
 }

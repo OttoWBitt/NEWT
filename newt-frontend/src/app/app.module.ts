@@ -16,6 +16,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginService } from './services/views/login.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth/auth.interceptor';
+import { ArtifactService } from './services/views/artifact.service';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { AuthInterceptor } from './services/auth/auth.interceptor';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    LoginService
+    LoginService,
+    ArtifactService
   ],
   bootstrap: [AppComponent]
 })
