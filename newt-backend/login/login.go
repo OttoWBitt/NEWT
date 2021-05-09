@@ -29,13 +29,13 @@ func Signup(res http.ResponseWriter, req *http.Request) {
 	//data json
 	data, erro := ioutil.ReadAll(req.Body)
 	if erro != nil {
-		common.RenderError(res, erro.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, erro.Error(), http.StatusInternalServerError)
 	}
 
 	var info inputData
 
 	if erro = json.Unmarshal(data, &info); erro != nil {
-		common.RenderError(res, erro.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, erro.Error(), http.StatusInternalServerError)
 	}
 
 	userName := info.UserName
@@ -58,7 +58,7 @@ func Signup(res http.ResponseWriter, req *http.Request) {
 	case err == sql.ErrNoRows:
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
-			common.RenderError(res, "Server error, unable to create your account.", http.StatusInternalServerError)
+			common.RenderResponse(res, "Server error, unable to create your account.", http.StatusInternalServerError)
 			return
 		}
 
@@ -74,17 +74,17 @@ func Signup(res http.ResponseWriter, req *http.Request) {
 		`, userName, hashedPassword, name, email)
 
 		if err != nil {
-			common.RenderError(res, "Server error, unable to create your account.", http.StatusInternalServerError)
+			common.RenderResponse(res, "Server error, unable to create your account.", http.StatusInternalServerError)
 			return
 		}
 
 		res.Write([]byte("User created!"))
 		return
 	case err != nil:
-		common.RenderError(res, "Server error, unable to create your account.", http.StatusInternalServerError)
+		common.RenderResponse(res, "Server error, unable to create your account.", http.StatusInternalServerError)
 		return
 	default:
-		common.RenderError(res, erro.Error(), http.StatusMovedPermanently)
+		common.RenderResponse(res, erro.Error(), http.StatusMovedPermanently)
 	}
 
 }
@@ -94,13 +94,13 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	//data json
 	data, erro := ioutil.ReadAll(req.Body)
 	if erro != nil {
-		common.RenderError(res, erro.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, erro.Error(), http.StatusInternalServerError)
 	}
 
 	var info inputData
 
 	if erro = json.Unmarshal(data, &info); erro != nil {
-		common.RenderError(res, erro.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, erro.Error(), http.StatusInternalServerError)
 	}
 
 	userName := info.UserName
@@ -117,13 +117,13 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		`, userName).Scan(&databasePassword)
 
 	if err != nil {
-		common.RenderError(res, err.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(databasePassword), []byte(password))
 	if err != nil {
-		common.RenderError(res, err.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -144,7 +144,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 
 	err = db.DB.QueryRow(userQuery).Scan(&user.Id, &user.UserName, &user.Name, &user.Email)
 	if err != nil {
-		common.RenderError(res, err.Error(), http.StatusBadRequest)
+		common.RenderResponse(res, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -156,7 +156,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 
 	signedToken, err := jwtWrapper.GenerateToken(user.Email, user.UserName, user.Name, user.Id)
 	if err != nil {
-		common.RenderError(res, err.Error(), http.StatusBadRequest)
+		common.RenderResponse(res, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -170,7 +170,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	jsonData, err := json.Marshal(generateJSON)
 
 	if err != nil {
-		common.RenderError(res, err.Error(), http.StatusBadRequest)
+		common.RenderResponse(res, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -184,13 +184,13 @@ func RecoverPassword(res http.ResponseWriter, req *http.Request) {
 	//data json
 	data, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		common.RenderError(res, err.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 	}
 
 	var info inputData
 
 	if err := json.Unmarshal(data, &info); err != nil {
-		common.RenderError(res, err.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 	}
 
 	email := info.Email
@@ -204,7 +204,7 @@ func RecoverPassword(res http.ResponseWriter, req *http.Request) {
 
 	erro := mail.SendEmail(encID, email)
 	if erro != nil {
-		common.RenderError(res, "Error sending email", http.StatusInternalServerError)
+		common.RenderResponse(res, "Error sending email", http.StatusInternalServerError)
 	}
 	res.Write([]byte("SUCCESS"))
 
@@ -215,30 +215,30 @@ func ResetPassword(res http.ResponseWriter, req *http.Request) {
 	//data json
 	data, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		common.RenderError(res, err.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 	}
 
 	var info inputData
 
 	if err := json.Unmarshal(data, &info); err != nil {
-		common.RenderError(res, err.Error(), http.StatusInternalServerError)
+		common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 	}
 
 	recoverToken := info.RecoverToken
 	password := info.Password
 
 	if recoverToken == "" {
-		common.RenderError(res, "No recovery code", http.StatusInternalServerError)
+		common.RenderResponse(res, "No recovery code", http.StatusInternalServerError)
 	}
 
 	decID, err := crypto.DecodeString(recoverToken)
 	if err != nil {
-		common.RenderError(res, "Could not decrypt", http.StatusInternalServerError)
+		common.RenderResponse(res, "Could not decrypt", http.StatusInternalServerError)
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		common.RenderError(res, "Server error, unable to create your account.", http.StatusInternalServerError)
+		common.RenderResponse(res, "Server error, unable to create your account.", http.StatusInternalServerError)
 		return
 	}
 
@@ -252,7 +252,7 @@ func ResetPassword(res http.ResponseWriter, req *http.Request) {
 	`, hashedPassword, decID)
 
 	if err != nil {
-		common.RenderError(res, "Server error, unable to update your password.", http.StatusInternalServerError)
+		common.RenderResponse(res, "Server error, unable to update your password.", http.StatusInternalServerError)
 		return
 	}
 

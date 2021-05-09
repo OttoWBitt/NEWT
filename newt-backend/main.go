@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/OttoWBitt/NEWT/artifact"
+	colourblind "github.com/OttoWBitt/NEWT/colourBlind"
 	"github.com/OttoWBitt/NEWT/db"
 	"github.com/OttoWBitt/NEWT/fetch"
 	"github.com/OttoWBitt/NEWT/fileOps"
@@ -25,6 +26,9 @@ func main() {
 	router.HandleFunc("/api/reset", login.ResetPassword).Methods("POST")
 
 	router.HandleFunc("/api/teste", testeBarros).Methods("GET")
+	router.HandleFunc("/api/testeKaka", testeKaka).Methods("GET")
+
+	router.HandleFunc("/api/colourblind", colourblind.CheckColourBlindness).Methods("POST")
 
 	router.HandleFunc("/api/artifact/new", artifact.InsertArtifacts).Methods("POST")
 
@@ -36,8 +40,6 @@ func main() {
 
 	router.HandleFunc("/link", insertLinks)
 	router.HandleFunc("/link/recover", retrieveLinks)
-
-	router.HandleFunc("/download", fileOps.Download)
 
 	router.HandleFunc("/fetch/files", fetch.FetchFiles)
 	router.HandleFunc("/fetch/files/id", fetch.FetchFilesByID)
