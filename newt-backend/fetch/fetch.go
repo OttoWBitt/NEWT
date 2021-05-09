@@ -1,4 +1,4 @@
-package main
+package fetch
 
 import (
 	"encoding/json"
@@ -6,10 +6,11 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/OttoWBitt/NEWT/db"
 	"github.com/elgs/gosqljson"
 )
 
-func fetchFiles(res http.ResponseWriter, req *http.Request) {
+func FetchFiles(res http.ResponseWriter, req *http.Request) {
 	const theCase = "original"
 
 	const queryFiles = `
@@ -23,7 +24,7 @@ func fetchFiles(res http.ResponseWriter, req *http.Request) {
 		newt.file_metadata
 	`
 
-	files, err := gosqljson.QueryDbToMap(dbMaster, theCase, queryFiles)
+	files, err := gosqljson.QueryDbToMap(db.DB, theCase, queryFiles)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,7 +44,7 @@ func fetchFiles(res http.ResponseWriter, req *http.Request) {
 	res.Write(jsonData)
 }
 
-func fetchLinks(res http.ResponseWriter, req *http.Request) {
+func FetchLinks(res http.ResponseWriter, req *http.Request) {
 	const theCase = "original"
 
 	const queryLinks = `
@@ -55,7 +56,7 @@ func fetchLinks(res http.ResponseWriter, req *http.Request) {
 		newt.links
 	`
 
-	links, err := gosqljson.QueryDbToMap(dbMaster, theCase, queryLinks)
+	links, err := gosqljson.QueryDbToMap(db.DB, theCase, queryLinks)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -75,7 +76,7 @@ func fetchLinks(res http.ResponseWriter, req *http.Request) {
 	res.Write(jsonData)
 }
 
-func fetchFilesByID(res http.ResponseWriter, req *http.Request) {
+func FetchFilesByID(res http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" {
 		http.ServeFile(res, req, "html/getFile.html")
 		return
@@ -128,17 +129,17 @@ func fetchFilesByID(res http.ResponseWriter, req *http.Request) {
 	qfc := fmt.Sprintf(queryFileComments, fileID)
 	qfr := fmt.Sprintf(queryFileReactions, fileID)
 
-	files, err := gosqljson.QueryDbToMap(dbMaster, theCase, qf)
+	files, err := gosqljson.QueryDbToMap(db.DB, theCase, qf)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	comments, err := gosqljson.QueryDbToMap(dbMaster, theCase, qfc)
+	comments, err := gosqljson.QueryDbToMap(db.DB, theCase, qfc)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	reactions, err := gosqljson.QueryDbToMap(dbMaster, theCase, qfr)
+	reactions, err := gosqljson.QueryDbToMap(db.DB, theCase, qfr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -160,7 +161,7 @@ func fetchFilesByID(res http.ResponseWriter, req *http.Request) {
 	res.Write(jsonData)
 }
 
-func fetchLinkByID(res http.ResponseWriter, req *http.Request) {
+func FetchLinkByID(res http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" {
 		http.ServeFile(res, req, "html/getLink.html")
 		return
@@ -211,17 +212,17 @@ func fetchLinkByID(res http.ResponseWriter, req *http.Request) {
 	qfc := fmt.Sprintf(queryLinkComments, linkID)
 	qfr := fmt.Sprintf(queryLinkReactions, linkID)
 
-	links, err := gosqljson.QueryDbToMap(dbMaster, theCase, ql)
+	links, err := gosqljson.QueryDbToMap(db.DB, theCase, ql)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	comments, err := gosqljson.QueryDbToMap(dbMaster, theCase, qfc)
+	comments, err := gosqljson.QueryDbToMap(db.DB, theCase, qfc)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	reactions, err := gosqljson.QueryDbToMap(dbMaster, theCase, qfr)
+	reactions, err := gosqljson.QueryDbToMap(db.DB, theCase, qfr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -243,7 +244,7 @@ func fetchLinkByID(res http.ResponseWriter, req *http.Request) {
 	res.Write(jsonData)
 }
 
-func fetchAllByUser(res http.ResponseWriter, req *http.Request) {
+func FetchAllByUser(res http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" {
 		http.ServeFile(res, req, "html/getAllUser.html")
 		return
@@ -252,6 +253,10 @@ func fetchAllByUser(res http.ResponseWriter, req *http.Request) {
 	const theCase = "original"
 
 	userID := req.FormValue("userID")
+
+	// teste := req.FormValue("Teste")
+
+	// fmt.Println(teste)
 
 	const queryLinks = `
 	SELECT
@@ -292,17 +297,17 @@ func fetchAllByUser(res http.ResponseWriter, req *http.Request) {
 	ql := fmt.Sprintf(queryLinks, userID)
 	qfc := fmt.Sprintf(queryComments, userID)
 
-	files, err := gosqljson.QueryDbToMap(dbMaster, theCase, qf)
+	files, err := gosqljson.QueryDbToMap(db.DB, theCase, qf)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	links, err := gosqljson.QueryDbToMap(dbMaster, theCase, ql)
+	links, err := gosqljson.QueryDbToMap(db.DB, theCase, ql)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	comments, err := gosqljson.QueryDbToMap(dbMaster, theCase, qfc)
+	comments, err := gosqljson.QueryDbToMap(db.DB, theCase, qfc)
 	if err != nil {
 		log.Fatal(err)
 	}

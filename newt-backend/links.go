@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/OttoWBitt/NEWT/common"
+	"github.com/OttoWBitt/NEWT/db"
 	"github.com/elgs/gosqljson"
 )
 
@@ -24,7 +26,7 @@ func insertLinks(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 	}
 
-	auth := userExists(id)
+	auth := common.UserExists(id)
 
 	fmt.Println(auth) //esse cara tem que vir do cookie do front, falta implementar
 
@@ -33,7 +35,7 @@ func insertLinks(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	_, err = dbMaster.Exec(
+	_, err = db.DB.Exec(
 		`INSERT INTO 
 			newt.links(
 				link, 
@@ -61,7 +63,7 @@ func retrieveLinks(res http.ResponseWriter, req *http.Request) {
 		newt.links 
 	`
 
-	links, err := gosqljson.QueryDbToMap(dbMaster, theCase, query)
+	links, err := gosqljson.QueryDbToMap(db.DB, theCase, query)
 	if err != nil {
 		log.Fatal(err)
 	}
