@@ -30,8 +30,8 @@ export class ArtifactService {
   
   getAllArtifacts() : Observable<Artifact[]> {
     return this.httpClient.get<any>(`${Constants.BASE_URL}artifact/all`, {headers: this.getHeaders()}).pipe(
-      map((response: any) => {
-        const resp: Artifact[] = response.artifacts;
+      map((response: Response) => {
+        const resp: Artifact[] = response.data;
         return resp;
       }));
   }

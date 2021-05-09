@@ -21,6 +21,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { SubjectService } from './services/views/subject.service';
 
 @NgModule({
   declarations: [
@@ -45,12 +47,14 @@ import { MatIconModule } from '@angular/material/icon';
     MatPaginatorModule,
     MatCardModule,
     MatIconModule,
+    MatSelectModule,
     HttpClientModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     LoginService,
-    ArtifactService
+    ArtifactService,
+    SubjectService
   ],
   bootstrap: [AppComponent]
 })
