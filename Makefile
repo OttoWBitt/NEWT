@@ -9,13 +9,13 @@ deploy-externo-zuado:
 deploy-int:
 	git fetch origin
 	git reset --hard origin/main
-	git push deploy-int master
+	git push deploy-int main
 	ssh ottobitt@192.168.0.14 "cd NEWT/newt-backend && make build-and-run && docker ps"
 
 deploy-ext:
 	git fetch origin
 	git reset --hard origin/main
-	git push deploy-int master
+	git push deploy-int main
 	ssh ottobitt@192.168.0.14 "cd NEWT/newt-backend && make build-and-run && docker ps"
 
 #git remote add deploy-ext ssh://ottobitt@newt.ottobittencourt.com/home/ottobitt/NEWT.git
