@@ -27,6 +27,14 @@ export class ArtifactService {
         return resp;
       }));
   }
+  
+  getAllArtifacts() : Observable<Artifact[]> {
+    return this.httpClient.get<any>(`${Constants.BASE_URL}artifact/all`, {headers: this.getHeaders()}).pipe(
+      map((response: any) => {
+        const resp: Artifact[] = response.artifacts;
+        return resp;
+      }));
+  }
 
   private getHeaders(): HttpHeaders {
     const headers = new HttpHeaders();

@@ -17,6 +17,10 @@ import { LoginService } from './services/views/login.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth/auth.interceptor';
 import { ArtifactService } from './services/views/artifact.service';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -37,6 +41,10 @@ import { ArtifactService } from './services/views/artifact.service';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatCardModule,
+    MatIconModule,
     HttpClientModule,
   ],
   providers: [
