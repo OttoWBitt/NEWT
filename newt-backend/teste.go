@@ -16,7 +16,8 @@ func testeBarros(res http.ResponseWriter, req *http.Request) {
 	jsonData, err := json.Marshal(generateJSON)
 
 	if err != nil {
-		common.RenderResponse(res, err.Error(), http.StatusBadRequest)
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusBadRequest)
 		return
 	}
 
@@ -46,10 +47,14 @@ func testeKaka(res http.ResponseWriter, req *http.Request) {
 		"questions": teste,
 	}
 
+	common.RenderResponse(res, nil, http.StatusOK)
+	return
+
 	jsonData, err := json.Marshal(generateJSON)
 
 	if err != nil {
-		common.RenderResponse(res, err.Error(), http.StatusBadRequest)
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusBadRequest)
 		return
 	}
 

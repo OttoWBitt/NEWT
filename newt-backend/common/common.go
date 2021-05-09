@@ -1,8 +1,10 @@
 package common
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -11,10 +13,10 @@ import (
 )
 
 type UserInfo struct {
-	Id       int
-	UserName string
-	Name     string
-	Email    string
+	Id       int    `json:"id"`
+	UserName string `json:"username"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
 }
 
 func UserExists(id int) error {
@@ -88,9 +90,28 @@ func GetUserIDByEmail(email string) (string, error) {
 	return id, nil
 }
 
-func RenderResponse(res http.ResponseWriter, message string, statusCode int) {
+func RenderResponse(res http.ResponseWriter, message *string, statusCode int) {
+
+	if message == nil && statusCode == http.StatusOK {
+		res.WriteHeader(statusCode)
+		res.Write([]byte("sucess"))
+		return
+	}
 	res.WriteHeader(statusCode)
-	res.Write([]byte(message))
+	generateJSON := map[string]interface{}{
+		"data":   nil,
+		"errors": message,
+	}
+
+	jsonData, err := json.Marshal(generateJSON)
+
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		log.Fatal(err)
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	res.Write(jsonData)
 }
 
 func DecodeJwt(token string) (*jwt.JwtClaim, error) {

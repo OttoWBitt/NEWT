@@ -28,24 +28,16 @@ func main() {
 	router.HandleFunc("/api/teste", testeBarros).Methods("GET")
 	router.HandleFunc("/api/testeKaka", testeKaka).Methods("GET")
 
-	router.HandleFunc("/api/colourblind", colourblind.CheckColourBlindness).Methods("POST")
+	router.HandleFunc("/api/colourblind/new", colourblind.CheckColourBlindness).Methods("POST")
+	router.HandleFunc("/api/colourblind", colourblind.FetchAllTests).Methods("GET")
 
 	router.HandleFunc("/api/artifact/new", artifact.InsertArtifacts).Methods("POST")
 
 	router.HandleFunc("/api/artifact/all", fetch.FetchAllArtifacts).Methods("GET")
-	router.HandleFunc("/api/subjects/all", fetch.FetchAllSubjects).Methods("GET")
+	router.HandleFunc("/api/subject/all", fetch.FetchAllSubjects).Methods("GET")
 
 	fs := http.FileServer(http.Dir(fileOps.UploadPath))
 	router.PathPrefix("/api/files/").Handler(http.StripPrefix("/api/files", fs))
-
-	router.HandleFunc("/link", insertLinks)
-	router.HandleFunc("/link/recover", retrieveLinks)
-
-	router.HandleFunc("/fetch/files", fetch.FetchFiles)
-	router.HandleFunc("/fetch/files/id", fetch.FetchFilesByID)
-	router.HandleFunc("/fetch/links", fetch.FetchLinks)
-	router.HandleFunc("/fetch/links/id", fetch.FetchLinkByID)
-	router.HandleFunc("/fetch/getAllUser", fetch.FetchAllByUser)
 
 	router.HandleFunc("/", homePage)
 
