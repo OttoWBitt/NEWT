@@ -16,13 +16,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type userInfo struct {
-	id       int
-	UserName string
-	Name     string
-	email    string
-}
-
 type inputData struct {
 	UserName     string `json:"userName"`
 	Password     string `json:"password"`
@@ -147,9 +140,9 @@ func Login(res http.ResponseWriter, req *http.Request) {
 
 	userQuery := fmt.Sprintf(query, userName)
 
-	var user userInfo
+	var user common.UserInfo
 
-	err = db.DB.QueryRow(userQuery).Scan(&user.id, &user.UserName, &user.Name, &user.email)
+	err = db.DB.QueryRow(userQuery).Scan(&user.Id, &user.UserName, &user.Name, &user.Email)
 	if err != nil {
 		common.RenderError(res, err.Error(), http.StatusBadRequest)
 		return
@@ -161,13 +154,14 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		ExpirationHours: 1,
 	}
 
-	signedToken, err := jwtWrapper.GenerateToken(user.email, user.UserName, user.Name, user.id)
+	signedToken, err := jwtWrapper.GenerateToken(user.Email, user.UserName, user.Name, user.Id)
 	if err != nil {
 		common.RenderError(res, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	generateJSON := map[string]interface{}{
+		"id":       user.Id,
 		"userName": user.UserName,
 		"name":     user.Name,
 		"token":    signedToken,
