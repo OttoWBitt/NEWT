@@ -1,6 +1,7 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -87,7 +88,7 @@ func GetUserIDByEmail(email string) (string, error) {
 	return id, nil
 }
 
-func RenderError(res http.ResponseWriter, message string, statusCode int) {
+func RenderResponse(res http.ResponseWriter, message string, statusCode int) {
 	res.WriteHeader(statusCode)
 	res.Write([]byte(message))
 }
@@ -106,28 +107,28 @@ func DecodeJwt(token string) (*jwt.JwtClaim, error) {
 	return claims, nil
 }
 
-func ValidateAndReturnLoggedUser(jwt string, res http.ResponseWriter) *UserInfo {
+func ValidateAndReturnLoggedUser(jwt string) (*UserInfo, int, error) {
 
 	if len(jwt) == 0 {
-		RenderError(res, "UserNotLoggedIn", http.StatusForbidden)
+		return nil, http.StatusForbidden, errors.New("UserNotLoggedIn")
 	}
 
 	jwtUser, err := DecodeJwt(jwt)
 	if err != nil {
 		erro := fmt.Sprintf("UserNotLoggedIn - %s", err)
-		RenderError(res, erro, http.StatusForbidden)
+		return nil, http.StatusForbidden, errors.New(erro)
 	}
 
 	user, err := GetUserByID(jwtUser.ID)
 	if err != nil {
 		erro := fmt.Sprintf("erro: %s", err)
-		RenderError(res, erro, http.StatusInternalServerError)
+		return nil, http.StatusInternalServerError, errors.New(erro)
 	}
 
 	if user.UserName != jwtUser.UserName {
 		erro := fmt.Sprintf("InvalidLoggedUser - %s", err)
-		RenderError(res, erro, http.StatusForbidden)
+		return nil, http.StatusForbidden, errors.New(erro)
 	}
 
-	return user
+	return user, http.StatusOK, nil
 }

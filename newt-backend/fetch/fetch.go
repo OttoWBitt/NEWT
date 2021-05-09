@@ -97,7 +97,7 @@ func FetchAllArtifacts(res http.ResponseWriter, req *http.Request) {
 
 	rows, err := db.DB.Query(artifactQuery)
 	if err != nil {
-		common.RenderError(res, err.Error(), http.StatusBadRequest)
+		common.RenderResponse(res, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -105,7 +105,7 @@ func FetchAllArtifacts(res http.ResponseWriter, req *http.Request) {
 		artifact := new(Artifact)
 		if err := rows.Scan(&artifact.Id, &artifact.Name, &artifact.UserId, &artifact.Description, &artifact.SubjectId,
 			&artifact.Link, &artifact.DonwloadLink); err != nil {
-			common.RenderError(res, err.Error(), http.StatusBadRequest)
+			common.RenderResponse(res, err.Error(), http.StatusBadRequest)
 		}
 		artifacts = append(artifacts, *artifact)
 	}
@@ -115,12 +115,12 @@ func FetchAllArtifacts(res http.ResponseWriter, req *http.Request) {
 	for _, art := range artifacts {
 		userId, err := strconv.Atoi(art.UserId)
 		if err != nil {
-			common.RenderError(res, err.Error(), http.StatusInternalServerError)
+			common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 		}
 
 		user, err := common.GetUserByID(userId)
 		if err != nil {
-			common.RenderError(res, err.Error(), http.StatusInternalServerError)
+			common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 		}
 
 		subQuery := fmt.Sprintf(subjectQuery, art.SubjectId)
@@ -130,20 +130,20 @@ func FetchAllArtifacts(res http.ResponseWriter, req *http.Request) {
 
 		err = db.DB.QueryRow(subQuery).Scan(&subIdStr, &subject.Name)
 		if err != nil {
-			common.RenderError(res, err.Error(), http.StatusBadRequest)
+			common.RenderResponse(res, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		subId, err := strconv.Atoi(subIdStr)
 		if err != nil {
-			common.RenderError(res, err.Error(), http.StatusInternalServerError)
+			common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 		}
 
 		subject.Id = subId
 
 		artId, err := strconv.Atoi(art.Id)
 		if err != nil {
-			common.RenderError(res, err.Error(), http.StatusInternalServerError)
+			common.RenderResponse(res, err.Error(), http.StatusInternalServerError)
 		}
 
 		subject.Id = subId
