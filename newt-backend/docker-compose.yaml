@@ -4,8 +4,8 @@ services:
     image: mariadb:10.5.9
     #restart: always
     volumes:
-      - ../dataBase:/var/lib/mysql
-      # - mariadb-data:/var/lib/mysql
+      # - ../dataBase:/var/lib/mysql
+      - mariadb-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: asdfg321
     ports:

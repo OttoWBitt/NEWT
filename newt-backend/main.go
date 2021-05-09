@@ -1,56 +1,48 @@
 package main
 
 import (
-	"database/sql"
-	"log"
 	"net/http"
 	"os"
 
+	"github.com/OttoWBitt/NEWT/artifact"
+	"github.com/OttoWBitt/NEWT/db"
+	"github.com/OttoWBitt/NEWT/fetch"
+	"github.com/OttoWBitt/NEWT/fileOps"
+	"github.com/OttoWBitt/NEWT/login"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
 
-var dbMaster *sql.DB
-
-//dataBase opens the data base connection to master
-func dataBaseMaster(dsn string) {
-
-	var err error
-	dbMaster, err = sql.Open("mysql", dsn)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-}
-
 func main() {
 
-	dataBaseMaster(os.Getenv("MYSQL"))
-	mux := http.NewServeMux()
+	db.OpenDataBase(os.Getenv("MYSQL"))
+	router := mux.NewRouter()
 
-	mux.HandleFunc("/upload", uploadFileHandler())
-	mux.HandleFunc("/download", download)
+	router.HandleFunc("/api/signup", login.Signup).Methods("POST")
+	router.HandleFunc("/api/login", login.Login).Methods("POST")
+	router.HandleFunc("/api/recover", login.RecoverPassword).Methods("POST")
+	router.HandleFunc("/api/reset", login.ResetPassword).Methods("POST")
 
-	fs := http.FileServer(http.Dir(uploadPath))
-	mux.Handle("/files/", http.StripPrefix("/files", fs))
+	router.HandleFunc("/api/teste", testeBarros).Methods("GET")
 
-	mux.HandleFunc("/api/signup", signupPage)
-	mux.HandleFunc("/api/login", login)
-	mux.HandleFunc("/api/recover", recoverPassword)
-	mux.HandleFunc("/api/reset", resetPassword)
+	router.HandleFunc("/api/artifact/new", artifact.InsertArtifacts).Methods("POST")
 
-	mux.HandleFunc("/api/teste", testeBarros)
+	fs := http.FileServer(http.Dir(fileOps.UploadPath))
+	router.PathPrefix("/api/files/").Handler(http.StripPrefix("/api/files", fs))
 
-	mux.HandleFunc("/link", insertLinks)
-	mux.HandleFunc("/link/recover", retrieveLinks)
+	router.HandleFunc("/link", insertLinks)
+	router.HandleFunc("/link/recover", retrieveLinks)
 
-	mux.HandleFunc("/fetch/files", fetchFiles)
-	mux.HandleFunc("/fetch/files/id", fetchFilesByID)
-	mux.HandleFunc("/fetch/links", fetchLinks)
-	mux.HandleFunc("/fetch/links/id", fetchLinkByID)
-	mux.HandleFunc("/fetch/getAllUser", fetchAllByUser)
+	router.HandleFunc("/download", fileOps.Download)
 
-	mux.HandleFunc("/", homePage)
+	router.HandleFunc("/fetch/files", fetch.FetchFiles)
+	router.HandleFunc("/fetch/files/id", fetch.FetchFilesByID)
+	router.HandleFunc("/fetch/links", fetch.FetchLinks)
+	router.HandleFunc("/fetch/links/id", fetch.FetchLinkByID)
+	router.HandleFunc("/fetch/getAllUser", fetch.FetchAllByUser)
+
+	router.HandleFunc("/", homePage)
 
 	corsWrapper := cors.New(cors.Options{
 		AllowedMethods: []string{"GET", "POST"},
@@ -58,10 +50,10 @@ func main() {
 	})
 
 	//default functions
-	handler := corsWrapper.Handler(mux)
+	handler := corsWrapper.Handler(router)
 	http.ListenAndServe(":3001", handler)
 
-	defer dbMaster.Close()
+	defer db.DB.Close()
 
 }
 

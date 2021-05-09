@@ -1,4 +1,4 @@
-package main
+package email
 
 import (
 	"crypto/tls"
@@ -7,7 +7,7 @@ import (
 	gomail "gopkg.in/mail.v2"
 )
 
-func sendEmail(id string, email string) error {
+func SendEmail(id string, email string) error {
 	m := gomail.NewMessage()
 
 	emailAcc := "newtrecovery@gmail.com"
