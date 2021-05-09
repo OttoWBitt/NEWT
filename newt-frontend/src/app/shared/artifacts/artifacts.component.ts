@@ -55,6 +55,14 @@ export class ArtifactsComponent implements OnInit, AfterViewInit{
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  filterSubject(subjectIdList: string[]){
+    if (subjectIdList.length > 0){
+      this.dataSource.data = this.artifacts.filter(artifact => subjectIdList.includes(artifact.subject.id.toString()))
+    } else {
+      this.dataSource.data = this.artifacts
+    }
+  }
+
   goToUrl(link: string){
     window.open(link, "_blank");
   }

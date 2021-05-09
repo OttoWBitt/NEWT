@@ -13,8 +13,7 @@
         <span>Artefatos dispóníveis para consulta</span>
         <mat-form-field appearance="outline">
           <mat-label>Assunto</mat-label>
-          <mat-select>
-            <mat-option [value]="0">Todos</mat-option>
+          <mat-select multiple (selectionChange)="filterSubject($event.value)">
             <mat-option *ngFor="let subject of subjects" [value]="subject.id">{{subject.name}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -22,7 +21,7 @@
     </mat-card-header>
     <mat-card-content>
       <mat-form-field>
-        <mat-label>Filter</mat-label>
+        <mat-label>Busca</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
       </mat-form-field>
       <div class="mat-elevation-z8">
