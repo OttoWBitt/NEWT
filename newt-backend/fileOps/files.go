@@ -24,11 +24,11 @@ type inputData struct {
 	File     http.File `json:"file"`
 }
 
-func UploadFileHandler(res http.ResponseWriter, req *http.Request) {
+func UploadFileHandler(res http.ResponseWriter, req *http.Request) (*string, *string) {
 	if err := req.ParseMultipartForm(maxUploadSize); err != nil {
 		fmt.Printf("Could not parse multipart form: %v\n", err)
 		common.RenderError(res, "CANT_PARSE_FORM", http.StatusInternalServerError)
-		return
+		return nil, nil
 	}
 
 	fmt.Println("PASSEI AQUI MANO")
@@ -58,7 +58,7 @@ func UploadFileHandler(res http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 		fmt.Println("1")
 		common.RenderError(res, "INVALID_FILE", http.StatusBadRequest)
-		return
+		return nil, nil
 	}
 	fmt.Println(fileHeader.Filename)
 	defer file.Close()
@@ -70,14 +70,14 @@ func UploadFileHandler(res http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 		fmt.Println("2")
 		common.RenderError(res, "FILE_TOO_BIG", http.StatusBadRequest)
-		return
+		return nil, nil
 	}
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("3")
 		common.RenderError(res, "INVALID_FILE", http.StatusBadRequest)
-		return
+		return nil, nil
 	}
 
 	// check file type, detectcontenttype only needs the first 512 bytes
@@ -90,7 +90,7 @@ func UploadFileHandler(res http.ResponseWriter, req *http.Request) {
 	default:
 		fmt.Println("QUEBREI AQUI")
 		common.RenderError(res, "INVALID_FILE_TYPE", http.StatusBadRequest)
-		return
+		return nil, nil
 	}
 	fileNameToken := randToken(12)
 	fileEndings, err := mime.ExtensionsByType(detectedFileType)
@@ -98,7 +98,7 @@ func UploadFileHandler(res http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 		fmt.Println("4")
 		common.RenderError(res, "CANT_READ_FILE_TYPE", http.StatusInternalServerError)
-		return
+		return nil, nil
 	}
 	fileName := filepath.Join(UploadPath, fileNameToken+fileEndings[0])
 	fmt.Printf("FileType: %s, File: %s\n", detectedFileType, fileName)
@@ -106,13 +106,13 @@ func UploadFileHandler(res http.ResponseWriter, req *http.Request) {
 	const dns = "http://192.168.0.14:3001/api/%s"
 	url := fmt.Sprintf(dns, fileName)
 
-	erro := saveFileMetadata(fileHeader.Filename, url, 1, "teste")
-	if erro != nil {
-		fmt.Println(err)
-		fmt.Println("5")
-		common.RenderError(res, "CANT_SAVE_METADATA", http.StatusInternalServerError)
-		return
-	}
+	// erro := saveFileMetadata(fileHeader.Filename, url, 1, "teste")
+	// if erro != nil {
+	// 	fmt.Println(err)
+	// 	fmt.Println("5")
+	// 	common.RenderError(res, "CANT_SAVE_METADATA", http.StatusInternalServerError)
+	// 	return nil, nil
+	// }
 
 	// write file
 	newFile, err := os.Create(fileName)
@@ -120,17 +120,18 @@ func UploadFileHandler(res http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 		fmt.Println("6")
 		common.RenderError(res, "CANT_WRITE_FILE", http.StatusInternalServerError)
-		return
+		return nil, nil
 	}
 	defer newFile.Close() // idempotent, okay to call twice
 	if _, err := newFile.Write(fileBytes); err != nil || newFile.Close() != nil {
 		fmt.Println(err)
 		fmt.Println("7")
 		common.RenderError(res, "CANT_WRITE_FILE", http.StatusInternalServerError)
-		return
+		return nil, nil
 	}
 	res.WriteHeader(http.StatusOK)
 	res.Write([]byte("SUCCESS"))
+	return &fileHeader.Filename, &url
 }
 
 func randToken(len int) string {
@@ -139,24 +140,24 @@ func randToken(len int) string {
 	return fmt.Sprintf("%x", b)
 }
 
-func saveFileMetadata(fileName string, codedName string, userID int, subject string) error {
+// func saveFileMetadata(fileName string, codedName string, userID int, subject string) error {
 
-	_, err := db.DB.Exec(
-		`INSERT INTO 
-			newt.file_metadata(
-				user_id,
-				name,
-				url,
-				subject
-			) 
-		VALUES (?,?,?,?)
-	`, userID, fileName, codedName, subject)
+// 	_, err := db.DB.Exec(
+// 		`INSERT INTO
+// 			newt.file_metadata(
+// 				user_id,
+// 				name,
+// 				url,
+// 				subject
+// 			)
+// 		VALUES (?,?,?,?)
+// 	`, userID, fileName, codedName, subject)
 
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
 func Download(res http.ResponseWriter, req *http.Request) {
 	const theCase = "original"

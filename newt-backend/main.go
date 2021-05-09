@@ -28,6 +28,9 @@ func main() {
 
 	router.HandleFunc("/api/artifact/new", artifact.InsertArtifacts).Methods("POST")
 
+	router.HandleFunc("/api/artifact/all", fetch.FetchAllArtifacts).Methods("GET")
+	router.HandleFunc("/api/subjects/all", fetch.FetchAllSubjects).Methods("GET")
+
 	fs := http.FileServer(http.Dir(fileOps.UploadPath))
 	router.PathPrefix("/api/files/").Handler(http.StripPrefix("/api/files", fs))
 
