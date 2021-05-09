@@ -17,7 +17,7 @@ deploy-ext:
 	ssh ottobitt@newt.ottobittencourt.com "rm -rf NEWT && mkdir NEWT"
 	git fetch origin
 	git reset --hard origin/main
-	git push deploy-int main
+	git push deploy-ext main
 	ssh ottobitt@newt.ottobittencourt.com "cd NEWT/newt-backend && make build-and-run-all && docker ps"
 
 #git remote add deploy-ext ssh://ottobitt@newt.ottobittencourt.com/home/ottobitt/NEWT.git
