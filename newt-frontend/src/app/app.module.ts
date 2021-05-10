@@ -23,13 +23,16 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { SubjectService } from './services/views/subject.service';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { HeaderComponent } from './shared/header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LandingComponent,
     SystemLayoutComponent,
-    ArtifactsComponent
+    ArtifactsComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +51,7 @@ import { SubjectService } from './services/views/subject.service';
     MatCardModule,
     MatIconModule,
     MatSelectModule,
+    MatToolbarModule,
     HttpClientModule,
   ],
   providers: [
