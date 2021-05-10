@@ -1,0 +1,44 @@
+<form [formGroup]="artifactForm" (ngSubmit)="onSubmit()">
+    <div class="panel" fxLayout="column" fxLayoutGap="15px">
+        <div fxLayout="row" fxLayoutGap="20px">
+            <mat-form-field appearance="outline">
+                <mat-label>Nome do Artefato</mat-label>
+                <input matInput formControlName="name">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Assunto</mat-label>
+                <mat-select formControlName="subject">
+                  <mat-option *ngFor="let subject of subjects" [value]="subject.id">{{subject.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Descrição</mat-label>
+            <input matInput formControlName="description">
+        </mat-form-field>
+
+        <div fxLayout="row" fxLayoutGap="20px">
+            <mat-form-field appearance="outline">
+                <mat-label>Link</mat-label>
+                <input matInput formControlName="link">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Selecione um arquivo</mat-label>
+                <ngx-mat-file-input (change)="handleFileInput($event.target.files)"></ngx-mat-file-input>
+                <mat-icon matSuffix>folder</mat-icon>
+            </mat-form-field>
+        </div>
+
+        <!-- <div class="form-group">
+            <label for="file">Choose File</label>
+            <input type="file"
+                id="file"
+                (change)="handleFileInput($event.target.files)">
+        </div> -->
+        <div fxLayout="row" fxLayoutAlign="space-between">
+            <button mat-flat-button color="basic" (click)="close()">FECHAR</button>
+            <button mat-flat-button type="submit" color="primary">SALVAR</button>
+        </div>
+    </div>
+</form>
