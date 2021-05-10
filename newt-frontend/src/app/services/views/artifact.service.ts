@@ -14,12 +14,12 @@ export class ArtifactService {
   
   newArtifact(artifact: Artifact) : Observable<any> {
     const formData: FormData = new FormData();
-    formData.append('artifactFile', artifact.file);
-    formData.append('artifactLink', artifact.link);
     formData.append('artifactName', artifact.name);
     formData.append('artifactDescription', artifact.description);
     formData.append('artifactUserId', artifact.user.id.toString());
     formData.append('artifactSubjectId', artifact.subject.id.toString());
+    formData.append('artifactFile', artifact.file);
+    formData.append('artifactLink', artifact.link);
 
     return this.httpClient.post<Response>(`${Constants.BASE_URL}artifact/new`, formData, {headers: this.getHeaders()}).pipe(
       map((response: Response) => {

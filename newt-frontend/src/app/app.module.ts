@@ -11,7 +11,8 @@ import { LandingRoutingModule } from './views/landing/landing-routing.module';
 import { LandingComponent } from './views/landing/landing.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
-import {MatDividerModule} from '@angular/material/divider';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginService } from './services/views/login.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -25,6 +26,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { SubjectService } from './services/views/subject.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { HeaderComponent } from './shared/header/header.component';
+import { ArtifactDialogComponent } from './shared/artifact-dialog/artifact-dialog.component';
+import { MaterialFileInputModule } from 'ngx-material-file-input';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,8 @@ import { HeaderComponent } from './shared/header/header.component';
     LandingComponent,
     SystemLayoutComponent,
     ArtifactsComponent,
-    HeaderComponent
+    HeaderComponent,
+    ArtifactDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -52,6 +56,8 @@ import { HeaderComponent } from './shared/header/header.component';
     MatIconModule,
     MatSelectModule,
     MatToolbarModule,
+    MatDialogModule,
+    MaterialFileInputModule,
     HttpClientModule,
   ],
   providers: [
