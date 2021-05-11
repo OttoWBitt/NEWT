@@ -7,6 +7,8 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
+var SecretKey = "ChaveSecretaDoNEWTas65d@#$@#423jkl2j3423@#$2354ds5f4sd5f4sdf())@!sd6f5s6d4f54234"
+
 // JwtWrapper wraps the signing key and the issuer
 type JwtWrapper struct {
 	SecretKey       string
@@ -16,10 +18,10 @@ type JwtWrapper struct {
 
 // JwtClaim adds email as a claim to the token
 type JwtClaim struct {
-	Email    string
-	UserName string
-	Name     string
-	ID       int
+	Email    string `json:"email"`
+	UserName string `json:"username"`
+	Name     string `json:"name"`
+	ID       int    `json:"id"`
 	jwt.StandardClaims
 }
 

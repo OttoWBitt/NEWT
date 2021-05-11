@@ -13,7 +13,7 @@ import (
 
 type InputData struct {
 	Questions []Questions `json:"questions"`
-	Token     string      `json:"token"`
+	UserId    string      `json:"user_id"`
 }
 type Questions struct {
 	Useranswer    int `json:"UserAnswer"`
@@ -48,14 +48,15 @@ func CheckColourBlindness(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//token := info.Token
 	questions := info.Questions
+	userId := info.UserId
 
-	// user, httpResponse, err := common.ValidateAndReturnLoggedUser(token)
-	// if err != nil {
-	// 	common.RenderResponse(res, err.Error(), httpResponse)
-	// 	return
-	// }
+	userid, err := strconv.Atoi(userId)
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusInternalServerError)
+		return
+	}
 
 	var points = 0
 
@@ -70,7 +71,7 @@ func CheckColourBlindness(res http.ResponseWriter, req *http.Request) {
 		probablyColourBlind = true
 	}
 
-	query := fmt.Sprintf(queryInsertColourBlindResult, 1, points, probablyColourBlind)
+	query := fmt.Sprintf(queryInsertColourBlindResult, userid, points, probablyColourBlind)
 
 	_, err = db.DB.Exec(query)
 	if err != nil {
@@ -80,7 +81,7 @@ func CheckColourBlindness(res http.ResponseWriter, req *http.Request) {
 	}
 
 	generateJSON := map[string]interface{}{
-		"result":               points,
+		"points":               points,
 		"probablyColourBlind?": probablyColourBlind,
 	}
 
@@ -138,14 +139,6 @@ func FetchAllTests(res http.ResponseWriter, req *http.Request) {
 	// if err = json.Unmarshal(data, &info); err != nil {
 	// 	erro := err.Error()
 	// 	common.RenderResponse(res, &erro, http.StatusInternalServerError)
-	// 	return
-	// }
-
-	//token := info.Token
-
-	// user, httpResponse, err := common.ValidateAndReturnLoggedUser(token)
-	// if err != nil {
-	// 	common.RenderResponse(res, err.Error(), httpResponse)
 	// 	return
 	// }
 
