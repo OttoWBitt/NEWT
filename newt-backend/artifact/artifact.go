@@ -34,120 +34,124 @@ func InsertArtifacts(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if usrId == user.Id {
+	if usrId != user.Id {
+		erro := "logged user id is not the same as artifactUserId"
+		common.RenderResponse(res, &erro, http.StatusForbidden)
+		return
+	}
 
-		var returnObj *common.ReturnArtifacts
-		_, _, haveFile := req.FormFile("artifactFile")
+	var returnObj *common.ReturnArtifacts
+	_, _, haveFile := req.FormFile("artifactFile")
 
-		if haveFile != http.ErrMissingFile && len(req.FormValue("artifactLink")) == 0 {
+	if haveFile != http.ErrMissingFile && len(req.FormValue("artifactLink")) == 0 {
 
-			fileName, downloadUrl, err, httpResponse := fileOps.UploadFileHandler(res, req)
-			if err != nil {
-				erro := err.Error()
-				common.RenderResponse(res, &erro, httpResponse)
-				return
-			}
-
-			strSubId := req.FormValue("artifactSubjectId")
-			subId, err := strconv.Atoi(strSubId)
-			if err != nil {
-				erro := err.Error()
-				common.RenderResponse(res, &erro, http.StatusInternalServerError)
-				return
-			}
-
-			lastRow, err := saveArtifact(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), nil, fileName, downloadUrl)
-			if err != nil {
-				erro := "could not save link - " + err.Error()
-				common.RenderResponse(res, &erro, http.StatusInternalServerError)
-				return
-			}
-
-			returnObj, err = returnObject(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), nil, fileName, downloadUrl, *lastRow)
-			if err != nil {
-				erro := "return error - " + err.Error()
-				common.RenderResponse(res, &erro, http.StatusInternalServerError)
-				return
-			}
-
-		} else if haveFile == http.ErrMissingFile && len(req.FormValue("artifactLink")) > 0 {
-
-			strSubId := req.FormValue("artifactSubjectId")
-			subId, err := strconv.Atoi(strSubId)
-			if err != nil {
-				erro := err.Error()
-				common.RenderResponse(res, &erro, http.StatusInternalServerError)
-				return
-			}
-
-			artifactLink := req.FormValue("artifactLink")
-
-			lastRow, err := saveArtifact(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), &artifactLink, nil, nil)
-			if err != nil {
-				erro := "could not save link - " + err.Error()
-				common.RenderResponse(res, &erro, http.StatusInternalServerError)
-				return
-			}
-
-			returnObj, err = returnObject(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), &artifactLink, nil, nil, *lastRow)
-			if err != nil {
-				erro := "return error - " + err.Error()
-				common.RenderResponse(res, &erro, http.StatusInternalServerError)
-				return
-			}
-
-		} else if haveFile != http.ErrMissingFile && len(req.FormValue("artifactLink")) > 0 {
-
-			fileName, downloadUrl, err, httpResponse := fileOps.UploadFileHandler(res, req)
-			if err != nil {
-				erro := err.Error()
-				common.RenderResponse(res, &erro, httpResponse)
-				return
-			}
-
-			strSubId := req.FormValue("artifactSubjectId")
-			subId, err := strconv.Atoi(strSubId)
-			if err != nil {
-				erro := err.Error()
-				common.RenderResponse(res, &erro, http.StatusInternalServerError)
-				return
-			}
-
-			artifactLink := req.FormValue("artifactLink")
-
-			lastRow, err := saveArtifact(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), &artifactLink, fileName, downloadUrl)
-			if err != nil {
-				erro := "could not save link - " + err.Error()
-				common.RenderResponse(res, &erro, http.StatusInternalServerError)
-				return
-			}
-
-			returnObj, err = returnObject(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), &artifactLink, fileName,
-				downloadUrl, *lastRow)
-			if err != nil {
-				erro := "return error - " + err.Error()
-				common.RenderResponse(res, &erro, http.StatusInternalServerError)
-				return
-			}
-
+		fileName, downloadUrl, err, httpResponse := fileOps.UploadFileHandler(res, req)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, httpResponse)
+			return
 		}
 
-		generateJSON := map[string]interface{}{
-			"data":   returnObj,
-			"errors": nil,
-		}
-
-		jsonData, err := json.Marshal(generateJSON)
-
+		strSubId := req.FormValue("artifactSubjectId")
+		subId, err := strconv.Atoi(strSubId)
 		if err != nil {
 			erro := err.Error()
 			common.RenderResponse(res, &erro, http.StatusInternalServerError)
 			return
 		}
 
-		res.Header().Set("Content-Type", "application/json")
-		res.Write(jsonData)
+		lastRow, err := saveArtifact(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), nil, fileName, downloadUrl)
+		if err != nil {
+			erro := "could not save link - " + err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		returnObj, err = returnObject(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), nil, fileName, downloadUrl, *lastRow)
+		if err != nil {
+			erro := "return error - " + err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+	} else if haveFile == http.ErrMissingFile && len(req.FormValue("artifactLink")) > 0 {
+
+		strSubId := req.FormValue("artifactSubjectId")
+		subId, err := strconv.Atoi(strSubId)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		artifactLink := req.FormValue("artifactLink")
+
+		lastRow, err := saveArtifact(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), &artifactLink, nil, nil)
+		if err != nil {
+			erro := "could not save link - " + err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		returnObj, err = returnObject(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), &artifactLink, nil, nil, *lastRow)
+		if err != nil {
+			erro := "return error - " + err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+	} else if haveFile != http.ErrMissingFile && len(req.FormValue("artifactLink")) > 0 {
+
+		fileName, downloadUrl, err, httpResponse := fileOps.UploadFileHandler(res, req)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, httpResponse)
+			return
+		}
+
+		strSubId := req.FormValue("artifactSubjectId")
+		subId, err := strconv.Atoi(strSubId)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		artifactLink := req.FormValue("artifactLink")
+
+		lastRow, err := saveArtifact(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), &artifactLink, fileName, downloadUrl)
+		if err != nil {
+			erro := "could not save link - " + err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		returnObj, err = returnObject(*user, subId, req.FormValue("artifactName"), req.FormValue("artifactDescription"), &artifactLink, fileName,
+			downloadUrl, *lastRow)
+		if err != nil {
+			erro := "return error - " + err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
 	}
+
+	generateJSON := map[string]interface{}{
+		"data":   returnObj,
+		"errors": nil,
+	}
+
+	jsonData, err := json.Marshal(generateJSON)
+
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusInternalServerError)
+		return
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	res.Write(jsonData)
+
 }
 
 const queryInsertArtifactLink = `
