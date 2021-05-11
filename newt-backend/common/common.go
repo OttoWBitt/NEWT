@@ -153,6 +153,9 @@ func ValidateAndReturnLoggedUser(jwtUser UserInfo) (*UserInfo, int, error) {
 		return nil, http.StatusInternalServerError, errors.New(erro)
 	}
 
+	fmt.Println(user.Id)
+	fmt.Println(jwtUser.Id)
+
 	if user.UserName != jwtUser.UserName || user.Email != jwtUser.Email || user.Id != jwtUser.Id {
 		erro := fmt.Sprintf("InvalidLoggedUser - %s", err)
 		return nil, http.StatusForbidden, errors.New(erro)
