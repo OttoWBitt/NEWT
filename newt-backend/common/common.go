@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/OttoWBitt/NEWT/db"
 	"github.com/OttoWBitt/NEWT/jwt"
+	"github.com/mitchellh/mapstructure"
 )
 
 type UserInfo struct {
@@ -17,6 +19,21 @@ type UserInfo struct {
 	UserName string `json:"username"`
 	Name     string `json:"name"`
 	Email    string `json:"email"`
+}
+
+type Subject struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type ReturnArtifacts struct {
+	Id           int      `json:"id"`
+	Name         string   `json:"name"`
+	User         UserInfo `json:"user"`
+	Description  string   `json:"description"`
+	Subject      Subject  `json:"subject"`
+	Link         *string  `json:"link"`
+	DonwloadLink *string  `json:"downloadLink"`
 }
 
 func UserExists(id int) error {
@@ -116,7 +133,7 @@ func RenderResponse(res http.ResponseWriter, message *string, statusCode int) {
 
 func DecodeJwt(token string) (*jwt.JwtClaim, error) {
 	jwtWrapper := jwt.JwtWrapper{
-		SecretKey: "ChaveSecretaDoNEWTas65d@#$@#423jkl2j3423@#$2354ds5f4sd5f4sdf())@!sd6f5s6d4f54234",
+		SecretKey: jwt.SecretKey,
 		Issuer:    "AuthService",
 	}
 
@@ -128,28 +145,60 @@ func DecodeJwt(token string) (*jwt.JwtClaim, error) {
 	return claims, nil
 }
 
-func ValidateAndReturnLoggedUser(jwt string) (*UserInfo, int, error) {
+func ValidateAndReturnLoggedUser(jwtUser UserInfo) (*UserInfo, int, error) {
 
-	if len(jwt) == 0 {
-		return nil, http.StatusForbidden, errors.New("UserNotLoggedIn")
-	}
-
-	jwtUser, err := DecodeJwt(jwt)
-	if err != nil {
-		erro := fmt.Sprintf("UserNotLoggedIn - %s", err)
-		return nil, http.StatusForbidden, errors.New(erro)
-	}
-
-	user, err := GetUserByID(jwtUser.ID)
+	user, err := GetUserByID(jwtUser.Id)
 	if err != nil {
 		erro := fmt.Sprintf("erro: %s", err)
 		return nil, http.StatusInternalServerError, errors.New(erro)
 	}
 
-	if user.UserName != jwtUser.UserName {
+	if user.UserName != jwtUser.UserName || user.Email != jwtUser.Email || user.Id != jwtUser.Id {
 		erro := fmt.Sprintf("InvalidLoggedUser - %s", err)
 		return nil, http.StatusForbidden, errors.New(erro)
 	}
 
 	return user, http.StatusOK, nil
+}
+
+func GetUserFromContext(ctx context.Context) (*UserInfo, error) {
+
+	teste := ctx.Value("user")
+	var user UserInfo
+
+	err := mapstructure.Decode(teste, &user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func GetSubjectByID(id int) (*Subject, error) {
+
+	var resId, name string
+
+	err := db.DB.QueryRow(
+		`SELECT 
+			id ,
+			subject
+		FROM 
+			newt.subjects 
+		WHERE 
+			id = ?
+	`, id).Scan(&resId, &name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	intId, err := strconv.Atoi(resId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Subject{
+		Name: name,
+		Id:   intId,
+	}, nil
 }

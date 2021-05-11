@@ -56,21 +56,6 @@ type Artifact struct {
 	DonwloadLink *string
 }
 
-type Subject struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-type returnArtifacts struct {
-	Id           int             `json:"id"`
-	Name         string          `json:"name"`
-	User         common.UserInfo `json:"user"`
-	Description  string          `json:"description"`
-	Subject      Subject         `json:"subject"`
-	Link         *string         `json:"link"`
-	DonwloadLink *string         `json:"downloadLink"`
-}
-
 func FetchAllArtifacts(res http.ResponseWriter, req *http.Request) {
 
 	const artifactQuery = `
@@ -116,7 +101,7 @@ func FetchAllArtifacts(res http.ResponseWriter, req *http.Request) {
 		artifacts = append(artifacts, *artifact)
 	}
 
-	var retArtifacts []returnArtifacts
+	var retArtifacts []common.ReturnArtifacts
 
 	for _, art := range artifacts {
 		userId, err := strconv.Atoi(art.UserId)
@@ -135,7 +120,7 @@ func FetchAllArtifacts(res http.ResponseWriter, req *http.Request) {
 
 		subQuery := fmt.Sprintf(subjectQuery, art.SubjectId)
 
-		var subject Subject
+		var subject common.Subject
 		var subIdStr string
 
 		err = db.DB.QueryRow(subQuery).Scan(&subIdStr, &subject.Name)
@@ -163,7 +148,7 @@ func FetchAllArtifacts(res http.ResponseWriter, req *http.Request) {
 
 		subject.Id = subId
 
-		artifact := &returnArtifacts{
+		artifact := &common.ReturnArtifacts{
 			Id:           artId,
 			Name:         art.Name,
 			User:         *user,

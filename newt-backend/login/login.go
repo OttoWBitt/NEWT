@@ -53,8 +53,9 @@ func Signup(res http.ResponseWriter, req *http.Request) {
 		FROM 
 			newt.users 
 		WHERE 
-			username = ?
-	`, userName).Scan(&user)
+			username = ? AND 
+			email = ?
+	`, userName).Scan(&user, &email)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -160,7 +161,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	}
 
 	jwtWrapper := jwt.JwtWrapper{
-		SecretKey:       "ChaveSecretaDoNEWTas65d@#$@#423jkl2j3423@#$2354ds5f4sd5f4sdf())@!sd6f5s6d4f54234",
+		SecretKey:       jwt.SecretKey,
 		Issuer:          "AuthService",
 		ExpirationHours: 1,
 	}
@@ -173,10 +174,8 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	}
 
 	generateJSON := map[string]interface{}{
-		"id":       user.Id,
-		"userName": user.UserName,
-		"name":     user.Name,
-		"token":    signedToken,
+		"user":  user,
+		"token": signedToken,
 	}
 
 	jsonData, err := json.Marshal(generateJSON)
@@ -279,5 +278,102 @@ func ResetPassword(res http.ResponseWriter, req *http.Request) {
 	}
 
 	res.Write([]byte("Password Updated!"))
+
+}
+
+func LoginWithEmail(res http.ResponseWriter, req *http.Request) {
+
+	//data json
+	data, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusInternalServerError)
+	}
+
+	var info inputData
+
+	if err = json.Unmarshal(data, &info); err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusInternalServerError)
+	}
+
+	email := info.Email
+	password := info.Password
+
+	var databasePassword string
+
+	err = db.DB.QueryRow(`
+		SELECT
+			password
+		FROM 
+			newt.users 
+		WHERE email = ?
+		`, email).Scan(&databasePassword)
+
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusInternalServerError)
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(databasePassword), []byte(password))
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusInternalServerError)
+		return
+	}
+
+	const query = `
+		SELECT
+			id,
+			username, 
+			name,
+			email
+		FROM 
+			newt.users 
+		WHERE email = "%s"
+	`
+
+	userQuery := fmt.Sprintf(query, email)
+
+	var user common.UserInfo
+
+	err = db.DB.QueryRow(userQuery).Scan(&user.Id, &user.UserName, &user.Name, &user.Email)
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusBadRequest)
+		return
+	}
+
+	jwtWrapper := jwt.JwtWrapper{
+		SecretKey:       jwt.SecretKey,
+		Issuer:          "AuthService",
+		ExpirationHours: 1,
+	}
+
+	signedToken, err := jwtWrapper.GenerateToken(user.Email, user.UserName, user.Name, user.Id)
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusBadRequest)
+		return
+	}
+
+	generateJSON := map[string]interface{}{
+		"id":       user.Id,
+		"userName": user.UserName,
+		"name":     user.Name,
+		"token":    signedToken,
+	}
+
+	jsonData, err := json.Marshal(generateJSON)
+
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusBadRequest)
+		return
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	res.Write(jsonData)
 
 }
