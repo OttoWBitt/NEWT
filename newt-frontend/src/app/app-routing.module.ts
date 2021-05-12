@@ -18,7 +18,7 @@ const routes: Routes = [
         component: ArtifactsComponent
       },
       {
-        path: Views.artifac.url,
+        path: Views.artifact.url,
         component: ArtifactPageComponent
       }
     ]

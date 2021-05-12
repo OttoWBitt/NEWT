@@ -1,1 +1,52 @@
-<p>artifact-page works!</p>
+<mat-card>
+    <div>
+        <div fxFill fxLayout="row" fxLayoutAlign="space-between">
+            <div fxFlex="50%">
+                <mat-card-title>{{artifact.name}}</mat-card-title>
+                <mat-card-subtitle>{{artifact.subject.name}}</mat-card-subtitle>
+            </div>
+            <div fxFlex fxLayout="row" fxLayoutAlign="end center">
+                <div fxLayoutGap="25px">
+                    <button  mat-stroked-button color="primary" disabled="{{artifact.link ? 'false' : 'true'}}" (click)="goToUrl(artifact.link)">
+                        <span>Acessar Link &nbsp;</span>
+                        <mat-icon>open_in_new</mat-icon>
+                    </button>
+                    <button  mat-stroked-button color="primary" disabled="{{artifact.downloadLink ? 'false' : 'true'}}" (click)="goToUrl(artifact.downloadLink)">
+                        <span>Baixar Arquivo &nbsp;</span>
+                        <mat-icon>file_download</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <mat-card-content>
+      <p>
+        {{artifact.description}}
+      </p>
+    </mat-card-content>
+    <mat-divider></mat-divider>
+    <div *ngFor="let x of artifacts">
+        <div class="comment-box">
+            <div fxLayout="row" fxLayoutGap="10px">
+                <span class="timestamp">10:10:10 12/12/12</span>
+                <span class="username">OTTO bricks</span>
+            </div>
+            <div class="comment">
+                Oh no i hope i don fall
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+    </div>
+    <div fxLayout="column">
+        <mat-form-field>
+            <mat-label>Escreva um comentário</mat-label>
+            <textarea matInput placeholder="Ex. Excelente artigo, a perfeição..."></textarea>
+        </mat-form-field>
+        <div fxLayout="row" fxLayoutAlign="end center">
+            <button  mat-stroked-button (click)="goToUrl(artifact.link)">
+                <span>Salvar Comentário &nbsp;</span>
+                <mat-icon>comment</mat-icon>
+            </button>
+        </div>
+    </div>
+</mat-card>

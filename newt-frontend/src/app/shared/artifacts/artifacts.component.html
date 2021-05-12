@@ -30,7 +30,7 @@
           <!-- Name Column -->
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef> Nome </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            <td mat-cell *matCellDef="let element"><a (click)="selectArtifact(element)">{{element.name}}</a></td>
           </ng-container>
   
           <!-- Subject Column -->

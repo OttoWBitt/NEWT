@@ -2,10 +2,12 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { Artifact } from 'src/app/models/artifact.model';
 import { Subject } from 'src/app/models/subject.model';
 import { ArtifactService } from 'src/app/services/views/artifact.service';
 import { SubjectService } from 'src/app/services/views/subject.service';
+import { Views } from 'src/app/util/views.enum';
 import { ArtifactDialogComponent } from '../artifact-dialog/artifact-dialog.component';
 
 @Component({
@@ -27,6 +29,7 @@ export class ArtifactsComponent implements OnInit, AfterViewInit{
   constructor(
     private artifactService: ArtifactService,
     private subjectService: SubjectService,
+    private router: Router,
     private dialog: MatDialog
   ) { }
 
@@ -59,6 +62,10 @@ export class ArtifactsComponent implements OnInit, AfterViewInit{
         this.loadArtifacts()
       }
     })
+  }
+
+  selectArtifact(element: any) {
+    this.router.navigate([Views.artifact.navigate, element.id]);
   }
 
   ngAfterViewInit() {

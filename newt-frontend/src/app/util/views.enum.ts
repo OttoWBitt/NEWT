@@ -5,9 +5,10 @@ export class Views{
         url: 'artefatos'
     };
 
-    public static artifac = {
+    public static artifact = {
         name: 'Artefato',
-        url: 'artefato/:id'
+        url: 'artefato/:id',
+        navigate: 'artefato'
     };
 
     public static login = {
