@@ -30,6 +30,7 @@ import { ArtifactDialogComponent } from './shared/artifact-dialog/artifact-dialo
 import { MaterialFileInputModule } from 'ngx-material-file-input';
 import { getPtPaginatorIntl } from './util/pt-paginator-intl';
 import { ArtifactPageComponent } from './shared/artifact-page/artifact-page.component';
+import { CommentService } from './services/views/comment.service';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { ArtifactPageComponent } from './shared/artifact-page/artifact-page.comp
     { provide: MatPaginatorIntl, useValue: getPtPaginatorIntl()},
     LoginService,
     ArtifactService,
+    CommentService,
     SubjectService
   ],
   bootstrap: [AppComponent]

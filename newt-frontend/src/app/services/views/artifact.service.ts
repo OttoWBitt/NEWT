@@ -36,7 +36,7 @@ export class ArtifactService {
       }));
   }
   
-  getArtifactsById(artifactId: number) : Observable<Artifact> {
+  getArtifactById(artifactId: number) : Observable<Artifact> {
     return this.httpClient.get<any>(`${Constants.BASE_URL}artifact/${artifactId}`, {headers: this.getHeaders()}).pipe(
       map((response: Response) => {
         const resp: Artifact = response.data;
