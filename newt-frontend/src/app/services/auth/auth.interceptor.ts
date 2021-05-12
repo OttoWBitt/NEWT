@@ -30,7 +30,7 @@ export class AuthInterceptor implements HttpInterceptor {
       }
     }, (error: any) => {
       if (error instanceof HttpErrorResponse) {
-        return throwError(error.error.erros[0]);
+        return throwError(error.error.errors);
       }
     }
     ));

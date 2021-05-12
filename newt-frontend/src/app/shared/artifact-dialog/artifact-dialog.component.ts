@@ -53,7 +53,7 @@ export class ArtifactDialogComponent implements OnInit {
       this.setArtifactData()
       this.artifactService.newArtifact(this.artifact).subscribe(response => {
         if (response){
-          this.dialogRef.close()
+          this.dialogRef.close(true)
         }
         }, error => {
           console.log(error);
@@ -74,7 +74,7 @@ export class ArtifactDialogComponent implements OnInit {
 
   getUserId(){
     const sessionData = JSON.parse(localStorage.getItem('currentUser'));
-    return sessionData.id
+    return sessionData.user.id
   }
 
   close(){

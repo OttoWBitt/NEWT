@@ -35,12 +35,7 @@ export class ArtifactsComponent implements OnInit, AfterViewInit{
   }
 
   loadData(){
-    this.artifactService.getAllArtifacts().subscribe(response => {
-      if (response){
-        this.artifacts = response
-        this.dataSource.data = this.artifacts
-      }
-    })
+    this.loadArtifacts()
     this.subjectService.getAllSubjects().subscribe(response => {
       if (response){
         this.subjects = response
@@ -48,8 +43,22 @@ export class ArtifactsComponent implements OnInit, AfterViewInit{
     })
   }
 
+  loadArtifacts(){
+    this.artifactService.getAllArtifacts().subscribe(response => {
+      if (response){
+        this.artifacts = response
+        this.dataSource.data = this.artifacts
+      }
+    })
+  }
+
   addArtifact(){
     this.openDialog(ArtifactDialogComponent, null)
+    this.dialogRef.afterClosed().subscribe(response => {
+      if (response){
+        this.loadArtifacts()
+      }
+    })
   }
 
   ngAfterViewInit() {

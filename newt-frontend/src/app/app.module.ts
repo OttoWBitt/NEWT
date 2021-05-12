@@ -19,7 +19,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth/auth.interceptor';
 import { ArtifactService } from './services/views/artifact.service';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -28,6 +28,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { HeaderComponent } from './shared/header/header.component';
 import { ArtifactDialogComponent } from './shared/artifact-dialog/artifact-dialog.component';
 import { MaterialFileInputModule } from 'ngx-material-file-input';
+import { getPtPaginatorIntl } from './util/pt-paginator-intl';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { MaterialFileInputModule } from 'ngx-material-file-input';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: MatPaginatorIntl, useValue: getPtPaginatorIntl()},
     LoginService,
     ArtifactService,
     SubjectService

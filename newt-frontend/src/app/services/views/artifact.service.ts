@@ -23,7 +23,7 @@ export class ArtifactService {
 
     return this.httpClient.post<Response>(`${Constants.BASE_URL}artifact/new`, formData, {headers: this.getHeaders()}).pipe(
       map((response: Response) => {
-        const resp: any = response;
+        const resp: Artifact = response.data;
         return resp;
       }));
   }
