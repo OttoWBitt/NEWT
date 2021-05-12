@@ -29,6 +29,7 @@ import { HeaderComponent } from './shared/header/header.component';
 import { ArtifactDialogComponent } from './shared/artifact-dialog/artifact-dialog.component';
 import { MaterialFileInputModule } from 'ngx-material-file-input';
 import { getPtPaginatorIntl } from './util/pt-paginator-intl';
+import { ArtifactPageComponent } from './shared/artifact-page/artifact-page.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { getPtPaginatorIntl } from './util/pt-paginator-intl';
     SystemLayoutComponent,
     ArtifactsComponent,
     HeaderComponent,
-    ArtifactDialogComponent
+    ArtifactDialogComponent,
+    ArtifactPageComponent
   ],
   imports: [
     BrowserModule,
