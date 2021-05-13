@@ -6,6 +6,7 @@ import (
 
 	"github.com/OttoWBitt/NEWT/artifact"
 	colourblind "github.com/OttoWBitt/NEWT/colourBlind"
+	"github.com/OttoWBitt/NEWT/comments"
 	"github.com/OttoWBitt/NEWT/db"
 	"github.com/OttoWBitt/NEWT/fetch"
 	"github.com/OttoWBitt/NEWT/fileOps"
@@ -30,17 +31,20 @@ func main() {
 	router.HandleFunc("/api/teste", testeBarros).Methods("GET")
 	router.Handle("/api/testeKaka", middleware.AuthMiddleware(http.HandlerFunc(testeKaka))).Methods("GET")
 
-	//router.HandleFunc("/api/artifact/new", artifact.InsertArtifacts).Methods("POST")
 	router.Handle("/api/artifact/new", middleware.AuthMiddleware(http.HandlerFunc(artifact.InsertArtifacts))).Methods("POST")
+	router.Handle("/api/comment/new", middleware.AuthMiddleware(http.HandlerFunc(comments.InsertComments))).Methods("POST")
 
-	router.HandleFunc("/api/artifact/all", fetch.FetchAllArtifacts).Methods("GET")
-	router.HandleFunc("/api/subject/all", fetch.FetchAllSubjects).Methods("GET")
+	router.Handle("/api/artifact/all", middleware.AuthMiddleware(http.HandlerFunc(fetch.FetchAllArtifacts))).Methods("GET")
+	router.Handle("/api/artifact/{id}", middleware.AuthMiddleware(http.HandlerFunc(fetch.FetchArtifactsByID))).Methods("GET")
+	router.Handle("/api/subject/all", middleware.AuthMiddleware(http.HandlerFunc(fetch.FetchAllSubjects))).Methods("GET")
+	router.Handle("/api/artifact/{id}/comments", middleware.AuthMiddleware(http.HandlerFunc(fetch.FetchCommentsByArtifactID))).Methods("GET")
 
 	fs := http.FileServer(http.Dir(fileOps.UploadPath))
 	router.PathPrefix("/api/files/").Handler(http.StripPrefix("/api/files", fs))
 
 	router.HandleFunc("/api/colourblind/new", colourblind.CheckColourBlindness).Methods("POST")
 	router.HandleFunc("/api/colourblind", colourblind.FetchAllTests).Methods("GET")
+	router.HandleFunc("/api/colourblind/{id}", colourblind.FetchTestsByUserID).Methods("GET")
 
 	router.HandleFunc("/", homePage)
 

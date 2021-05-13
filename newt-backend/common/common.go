@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/OttoWBitt/NEWT/db"
 	"github.com/OttoWBitt/NEWT/jwt"
@@ -26,7 +27,7 @@ type Subject struct {
 	Name string `json:"name"`
 }
 
-type ReturnArtifacts struct {
+type Artifact struct {
 	Id           int      `json:"id"`
 	Name         string   `json:"name"`
 	User         UserInfo `json:"user"`
@@ -34,6 +35,14 @@ type ReturnArtifacts struct {
 	Subject      Subject  `json:"subject"`
 	Link         *string  `json:"link"`
 	DonwloadLink *string  `json:"downloadLink"`
+}
+
+type Comment struct {
+	Id       int      `json:"id"`
+	Date     string   `json:"date"`
+	User     UserInfo `json:"user"`
+	Artifact Artifact `json:"artifact"`
+	Comment  string   `json:"comment"`
 }
 
 func UserExists(id int) error {
@@ -153,9 +162,6 @@ func ValidateAndReturnLoggedUser(jwtUser UserInfo) (*UserInfo, int, error) {
 		return nil, http.StatusInternalServerError, errors.New(erro)
 	}
 
-	fmt.Println(user.Id)
-	fmt.Println(jwtUser.Id)
-
 	if user.UserName != jwtUser.UserName || user.Email != jwtUser.Email || user.Id != jwtUser.Id {
 		erro := fmt.Sprintf("InvalidLoggedUser - %s", err)
 		return nil, http.StatusForbidden, errors.New(erro)
@@ -204,4 +210,26 @@ func GetSubjectByID(id int) (*Subject, error) {
 		Name: name,
 		Id:   intId,
 	}, nil
+}
+
+func ConvertUtcToCustomTime(timestamp time.Time) string {
+	loc, err := time.LoadLocation("America/Sao_Paulo")
+	if err != nil {
+		panic(err)
+	}
+
+	now := timestamp.In(loc)
+
+	return fmt.Sprintf("%d:%d:%d %d/%d/%d", now.Hour(), now.Minute(), now.Second(), now.Day(), now.Month(), now.Year())
+}
+
+func ConvertUtcToCustomTimeDate(timestamp time.Time) string {
+	loc, err := time.LoadLocation("America/Sao_Paulo")
+	if err != nil {
+		panic(err)
+	}
+
+	now := timestamp.In(loc)
+
+	return fmt.Sprintf("%d/%d/%d", now.Day(), now.Month(), now.Year())
 }

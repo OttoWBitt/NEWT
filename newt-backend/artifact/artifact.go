@@ -40,7 +40,7 @@ func InsertArtifacts(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var returnObj *common.ReturnArtifacts
+	var returnObj *common.Artifact
 	_, _, haveFile := req.FormFile("artifactFile")
 
 	if haveFile != http.ErrMissingFile && len(req.FormValue("artifactLink")) == 0 {
@@ -238,14 +238,14 @@ func saveArtifact(user common.UserInfo, subjectId int, name, description string,
 }
 
 func returnObject(user common.UserInfo, subjectId int, name, description string, link, documentName, documentDownloadLink *string,
-	rowId int64) (*common.ReturnArtifacts, error) {
+	rowId int64) (*common.Artifact, error) {
 
 	subject, err := common.GetSubjectByID(subjectId)
 	if err != nil {
 		return nil, err
 	}
 
-	return &common.ReturnArtifacts{
+	return &common.Artifact{
 		Id:           int(rowId),
 		Name:         name,
 		User:         user,

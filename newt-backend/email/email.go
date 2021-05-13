@@ -21,7 +21,7 @@ func SendEmail(id string, email string) error {
 	// Set E-Mail subject
 	m.SetHeader("Subject", "NEWT Password recovery")
 
-	baseRecoverURL := "http://localhost:3000/reset"
+	baseRecoverURL := "http://newt.ottobittencourt.com:3001/reset"
 	var text string = "Por favor, use o codigo '%s' para poder resetar sua senha em %s"
 	recover := fmt.Sprintf(text, id, baseRecoverURL)
 
