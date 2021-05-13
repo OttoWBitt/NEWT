@@ -19,6 +19,14 @@ export class CommentService {
         return resp;
       }));
   }
+    
+  saveComment(comment: Commentary) : Observable<Commentary> {
+    return this.httpClient.post<any>(`${Constants.BASE_URL}comment/new`, comment,{headers: this.getHeaders()}).pipe(
+      map((response: Response) => {
+        const resp: Commentary = response.data;
+        return resp;
+      }));
+  }
 
   private getHeaders(): HttpHeaders {
     const headers = new HttpHeaders();

@@ -38,15 +38,17 @@
         <mat-divider></mat-divider>
     </div>
     <div fxLayout="column">
-        <mat-form-field>
-            <mat-label>Escreva um comentário</mat-label>
-            <textarea matInput placeholder="Ex. Excelente artigo, a perfeição..."></textarea>
-        </mat-form-field>
-        <div fxLayout="row" fxLayoutAlign="end center">
-            <button  mat-stroked-button (click)="goToUrl(artifact.link)">
-                <span>Salvar Comentário &nbsp;</span>
-                <mat-icon>comment</mat-icon>
-            </button>
-        </div>
+        <form [formGroup]="commentForm" (ngSubmit)="addComment()">
+            <mat-form-field>
+                <mat-label>Escreva um comentário</mat-label>
+                <textarea matInput placeholder="Ex. Excelente artigo, a perfeição..."></textarea>
+            </mat-form-field>
+            <div fxLayout="row" fxLayoutAlign="end center">
+                <button mat-stroked-button type="submit">
+                    <span>Salvar Comentário &nbsp;</span>
+                    <mat-icon>comment</mat-icon>
+                </button>
+            </div>
+        </form>
     </div>
 </mat-card>
