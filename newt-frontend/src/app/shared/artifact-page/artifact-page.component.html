@@ -1,5 +1,5 @@
 <mat-card>
-    <div>
+    <div class="container">
         <div fxFill fxLayout="row" fxLayoutAlign="space-between">
             <div fxFlex="50%">
                 <mat-card-title>{{artifact.name}}</mat-card-title>
@@ -19,36 +19,38 @@
             </div>
         </div>
     </div>
-    <mat-card-content>
+    <mat-card-content class="container">
       <p>
         {{artifact.description}}
       </p>
     </mat-card-content>
     <mat-divider></mat-divider>
     <div *ngFor="let comment of comments">
-        <div class="comment-box">
-            <div fxLayout="row" fxLayoutGap="10px">
-                <span class="timestamp">10:10:10 12/12/12</span>
-                <span class="username">OTTO bricks</span>
+        <div class="container">
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+                <span class="timestamp" fxFlex="15%">{{comment.date}}</span>
+                <span class="username">{{comment.user.username}}</span>
             </div>
             <div class="comment">
-                Oh no i hope i don fall
+                {{comment.comment}}
             </div>
         </div>
         <mat-divider></mat-divider>
     </div>
-    <div fxLayout="column">
-        <form [formGroup]="commentForm" (ngSubmit)="addComment()">
-            <mat-form-field>
-                <mat-label>Escreva um comentário</mat-label>
-                <textarea matInput placeholder="Ex. Excelente artigo, a perfeição..."></textarea>
-            </mat-form-field>
-            <div fxLayout="row" fxLayoutAlign="end center">
-                <button mat-stroked-button type="submit">
-                    <span>Salvar Comentário &nbsp;</span>
-                    <mat-icon>comment</mat-icon>
-                </button>
+    <form [formGroup]="commentForm" (ngSubmit)="addComment()">
+        <div fxLayout="column" class="container">
+            <div fxLayout="row" fxLayoutAlign="space-between">
+                <mat-form-field fxFlex="50%">
+                    <mat-label>Escreva um comentário</mat-label>
+                    <textarea matInput formControlName="comment" placeholder="Ex. Excelente artigo, a perfeição..."></textarea>
+                </mat-form-field>
+                <div fxLayout="row" fxLayoutAlign="end center">
+                    <button mat-stroked-button type="submit">
+                        <span>Salvar Comentário &nbsp;</span>
+                        <mat-icon>comment</mat-icon>
+                    </button>
+                </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </mat-card>

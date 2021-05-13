@@ -13,7 +13,7 @@ export class CommentService {
   constructor(private httpClient: HttpClient) { }
     
   getCommentsByArtifactId(artifactId: number) : Observable<Commentary[]> {
-    return this.httpClient.get<any>(`${Constants.BASE_URL}comment/all/artifact/${artifactId}`, {headers: this.getHeaders()}).pipe(
+    return this.httpClient.get<any>(`${Constants.BASE_URL}artifact/${artifactId}/comments`, {headers: this.getHeaders()}).pipe(
       map((response: Response) => {
         const resp: Commentary[] = response.data;
         return resp;

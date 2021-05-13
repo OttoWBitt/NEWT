@@ -31,6 +31,7 @@ import { MaterialFileInputModule } from 'ngx-material-file-input';
 import { getPtPaginatorIntl } from './util/pt-paginator-intl';
 import { ArtifactPageComponent } from './shared/artifact-page/artifact-page.component';
 import { CommentService } from './services/views/comment.service';
+import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -62,11 +63,13 @@ import { CommentService } from './services/views/comment.service';
     MatToolbarModule,
     MatDialogModule,
     MaterialFileInputModule,
+    MatSnackBarModule,
     HttpClientModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: MatPaginatorIntl, useValue: getPtPaginatorIntl()},
+    { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 5000}},
     LoginService,
     ArtifactService,
     CommentService,

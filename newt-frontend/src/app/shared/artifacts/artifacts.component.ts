@@ -21,7 +21,7 @@ export class ArtifactsComponent implements OnInit, AfterViewInit{
   subjects: Subject[];
   dialogRef: any;
 
-  displayedColumns: string[] = ['name', 'description','subject', 'username', 'link', 'download'];
+  displayedColumns: string[] = ['name', 'comments', 'description','subject', 'username', 'link', 'download'];
   dataSource = new MatTableDataSource<Artifact>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;

@@ -28,9 +28,19 @@
         <table mat-table [dataSource]="dataSource">
   
           <!-- Name Column -->
-          <ng-container matColumnDef="name">
+          <ng-container mat-sort-header matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef> Nome </th>
             <td mat-cell *matCellDef="let element"><a (click)="selectArtifact(element)">{{element.name}}</a></td>
+          </ng-container>
+  
+          <!-- Comments Column -->
+          <ng-container matColumnDef="comments">
+            <th mat-header-cell *matHeaderCellDef> Comentários </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button (click)="selectArtifact(element)">
+                <mat-icon>chat</mat-icon>
+              </button>
+            </td>
           </ng-container>
   
           <!-- Subject Column -->
