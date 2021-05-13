@@ -6,9 +6,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/OttoWBitt/NEWT/common"
 	"github.com/OttoWBitt/NEWT/db"
+	"github.com/gorilla/mux"
 )
 
 type InputData struct {
@@ -126,22 +128,6 @@ const colourBlindQuery = `
 
 func FetchAllTests(res http.ResponseWriter, req *http.Request) {
 
-	// //data json
-	// data, err := ioutil.ReadAll(req.Body)
-	// if err != nil {
-	// 	erro := err.Error()
-	// 	common.RenderResponse(res, &erro, http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// var info InputData
-
-	// if err = json.Unmarshal(data, &info); err != nil {
-	// 	erro := err.Error()
-	// 	common.RenderResponse(res, &erro, http.StatusInternalServerError)
-	// 	return
-	// }
-
 	var tests []test
 
 	rows, err := db.DB.Query(colourBlindQuery)
@@ -192,11 +178,129 @@ func FetchAllTests(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		const layout = "2006-01-02 15:04:05"
+		tesDate, err := time.Parse(layout, tes.date)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
 		test := &ReturnTests{
 			Id:                    testId,
 			User:                  *user,
 			Points:                testPoints,
-			Date:                  tes.date,
+			Date:                  common.ConvertUtcToCustomTimeDate(tesDate),
+			IsProbablyColourBlind: tes.isColourBlind,
+		}
+
+		returnTes = append(returnTes, *test)
+	}
+
+	generateJSON := map[string]interface{}{
+		"data": returnTes,
+	}
+
+	jsonData, err := json.Marshal(generateJSON)
+
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusInternalServerError)
+		return
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	res.Write(jsonData)
+}
+
+const colourBlindQueryByID = `
+	SELECT
+		id,
+		user_id,
+		points,
+		date,
+		is_colour_blind
+	FROM 
+		newt.colour_blind_test
+	WHERE
+		user_id = %s
+`
+
+func FetchTestsByUserID(res http.ResponseWriter, req *http.Request) {
+
+	vars := mux.Vars(req)
+	id, ok := vars["id"]
+	if !ok {
+		erro := "id is missing in parameters"
+		common.RenderResponse(res, &erro, http.StatusBadRequest)
+		return
+	}
+
+	var tests []test
+
+	query := fmt.Sprintf(colourBlindQueryByID, id)
+
+	rows, err := db.DB.Query(query)
+	if err != nil {
+		erro := err.Error()
+		common.RenderResponse(res, &erro, http.StatusBadRequest)
+		return
+	}
+
+	for rows.Next() {
+		test := new(test)
+		if err := rows.Scan(&test.id, &test.userId, &test.points, &test.date, &test.isColourBlind); err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, http.StatusBadRequest)
+			return
+		}
+		tests = append(tests, *test)
+	}
+
+	var returnTes []ReturnTests
+
+	for _, tes := range tests {
+		userId, err := strconv.Atoi(tes.userId)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		user, err := common.GetUserByID(userId)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		testId, err := strconv.Atoi(tes.id)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		testPoints, err := strconv.Atoi(tes.points)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		const layout = "2006-01-02 15:04:05"
+		tesDate, err := time.Parse(layout, tes.date)
+		if err != nil {
+			erro := err.Error()
+			common.RenderResponse(res, &erro, http.StatusInternalServerError)
+			return
+		}
+
+		test := &ReturnTests{
+			Id:                    testId,
+			User:                  *user,
+			Points:                testPoints,
+			Date:                  common.ConvertUtcToCustomTimeDate(tesDate),
 			IsProbablyColourBlind: tes.isColourBlind,
 		}
 
