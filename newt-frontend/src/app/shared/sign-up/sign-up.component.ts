@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/views/auth.service';
+import { generalExceptionTreatment } from 'src/app/util/error-handler';
 import { MessagesEnum } from 'src/app/util/messages.enum';
 import { Views } from 'src/app/util/views.enum';
 
@@ -15,7 +16,7 @@ import { Views } from 'src/app/util/views.enum';
 export class SignUpComponent implements OnInit {
 
   signUpForm: FormGroup;
-  newUser: User
+  newUser: User = new User()
 
   constructor(
     private authService: AuthService,
@@ -30,7 +31,7 @@ export class SignUpComponent implements OnInit {
 
   initForm() {
     this.signUpForm = this.formBuilder.group({
-      user: [null , Validators.required],
+      name: [null , Validators.required],
       username: [null , Validators.required],
       password: [null , Validators.required],
       email: [null , Validators.required],
@@ -40,12 +41,17 @@ export class SignUpComponent implements OnInit {
   signUp(){
     if (this.signUpForm.valid){
       this.setUserData()
-      this.authService.signUp(this.newUser).subscribe(response => {
-        if (response){
-          this.snackbar.open(MessagesEnum.SuccessUserSignUp);
-          this.router.navigate([Views.login.url])
+      this.authService.signUp(this.newUser).subscribe(
+        response => {
+          if (response){
+            this.snackbar.open(MessagesEnum.SuccessUserSignUp);
+            this.router.navigate([Views.artifacts.url])
+          }
+        },
+        error => {
+          this.snackbar.open(generalExceptionTreatment(error), 'Fechar')
         }
-      })
+      )
     }
   }
 
@@ -57,4 +63,7 @@ export class SignUpComponent implements OnInit {
     this.newUser.email = formData.email
   }
 
+  goToHome(){
+    this.router.navigate([Views.login.url])
+  }
 }

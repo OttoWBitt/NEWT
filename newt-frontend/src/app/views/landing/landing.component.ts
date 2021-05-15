@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatExpansionPanel } from '@angular/material/expansion';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/views/auth.service';
@@ -12,6 +13,8 @@ import { Views } from 'src/app/util/views.enum';
   styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent implements OnInit {
+
+  @ViewChild(MatExpansionPanel) expansionPanel: MatExpansionPanel ;
 
   loginForm: FormGroup;
   recoverForm: FormGroup;
@@ -60,6 +63,7 @@ export class LandingComponent implements OnInit {
       this.authService.recoverPassword(formData.email).subscribe(response => {
         if(response){
           this.snackbar.open(MessagesEnum.RecoveryEmailSent);
+          this.expansionPanel.close()
         }
       },
       error => {

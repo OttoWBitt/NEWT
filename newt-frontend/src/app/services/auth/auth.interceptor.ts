@@ -23,7 +23,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(tap((ev: HttpEvent<any>) => {
       if (ev instanceof HttpResponse) {
-        if (request.url.endsWith('/login') && request.method === 'POST' && ev.body) {
+        if ((request.url.endsWith('/login') || request.url.endsWith('/signup')) && request.method === 'POST' && ev.body) {
           localStorage.setItem('currentUser', JSON.stringify(ev.body));
         }
       }
