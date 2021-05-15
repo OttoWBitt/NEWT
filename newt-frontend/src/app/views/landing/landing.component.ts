@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/views/auth.service';
+import { MessagesEnum } from 'src/app/util/messages.enum';
 import { Views } from 'src/app/util/views.enum';
 
 @Component({
@@ -13,10 +15,12 @@ export class LandingComponent implements OnInit {
 
   loginForm: FormGroup;
   recoverForm: FormGroup;
+  panelOpenState: boolean;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
+    private snackbar: MatSnackBar,
     private authService: AuthService,
   ) { }
 
@@ -45,12 +49,19 @@ export class LandingComponent implements OnInit {
       }
     )
   }
-
-
-
+  
   recoverPassword(){
     let formData = this.recoverForm.getRawValue()
+    if (this.recoverForm.valid){
+      this.authService.recoverPassword(formData.email).subscribe(response => {
+        if(response){
+          this.snackbar.open(MessagesEnum.RecoveryEmailSent);
+        }
+      },
+      error => {
 
-    console.log(formData.email)
+      }
+      )
+    }
   }
 }
