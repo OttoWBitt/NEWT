@@ -11,11 +11,18 @@ export const routes: Routes = [
   },
   {
     path: '',
-    children: [{
-      path: 'login',
-      component: LandingComponent,
-      data: { title: 'Login' }
-    }]
+    children: [
+      {
+        path: 'login',
+        component: LandingComponent,
+        data: { title: 'Login' }
+      },
+      {
+        path: 'xr',
+        component: LandingComponent,
+        data: { title: 'Login' }
+      }
+  ]
   },
 ];
 

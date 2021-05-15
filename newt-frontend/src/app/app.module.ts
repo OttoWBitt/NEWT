@@ -33,6 +33,7 @@ import { ArtifactPageComponent } from './shared/artifact-page/artifact-page.comp
 import { CommentService } from './services/views/comment.service';
 import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { SignUpComponent } from './shared/sign-up/sign-up.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     ArtifactsComponent,
     HeaderComponent,
     ArtifactDialogComponent,
-    ArtifactPageComponent
+    ArtifactPageComponent,
+    SignUpComponent
   ],
   imports: [
     BrowserModule,
