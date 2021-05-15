@@ -19,5 +19,21 @@ services:
       PMA_PASSWORD: asdfg321
     ports:
       - "8080:80"
+
+  # frontend:
+  #   build:
+  #     context: ./newt-frontend
+  #     dockerfile: Dockerfile
+  #   container_name: nbz-frontend
+  #   environment:
+  #     - FRONTEND_PORT=${FRONTEND_PORT}
+  #   depends_on:
+  #     - backend
+  #   ports:
+  #     - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+  #   expose:
+  #     - "${FRONTEND_PORT}"
+  #   command: [nginx-debug, '-g', 'daemon off;']
+    
 volumes:
   mariadb-data:
