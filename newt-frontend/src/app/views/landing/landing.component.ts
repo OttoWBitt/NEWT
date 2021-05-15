@@ -49,6 +49,10 @@ export class LandingComponent implements OnInit {
       }
     )
   }
+
+  goToSignUp(){
+    this.router.navigate([Views.signUp.url])
+  }
   
   recoverPassword(){
     let formData = this.recoverForm.getRawValue()

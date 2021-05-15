@@ -16,4 +16,9 @@ export class Views{
         url: 'login'
     };
 
+    public static signUp = {
+        name: 'Cadastrar',
+        url: 'cadastrar'
+    };
+
 }
