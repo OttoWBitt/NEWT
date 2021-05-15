@@ -7,6 +7,7 @@ import { Constants } from 'src/app/util/constants';
 import { Response } from 'src/app/models/response.model'
 import { Router } from '@angular/router';
 import { Views } from 'src/app/util/views.enum';
+import { User } from 'src/app/models/user.model';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,14 @@ export class AuthService {
       map((response: any) => {
         const user = response;
         return user;
+      }));
+  }
+
+  signUp(user: User) : Observable<User> {
+    return this.httpClient.post<any>(`${Constants.BASE_URL}signup`, user, {headers: this.getHeaders()}).pipe(
+      map((response: Response) => {
+        const resp: User = response.data;
+        return resp
       }));
   }
 
