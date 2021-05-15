@@ -34,6 +34,7 @@ import { CommentService } from './services/views/comment.service';
 import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { SignUpComponent } from './shared/sign-up/sign-up.component';
+import { PasswordRecoveryComponent } from './shared/password-recovery/password-recovery.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { SignUpComponent } from './shared/sign-up/sign-up.component';
     HeaderComponent,
     ArtifactDialogComponent,
     ArtifactPageComponent,
-    SignUpComponent
+    SignUpComponent,
+    PasswordRecoveryComponent
   ],
   imports: [
     BrowserModule,

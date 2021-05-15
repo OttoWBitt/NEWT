@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { PasswordRecoveryComponent } from 'src/app/shared/password-recovery/password-recovery.component';
 import { SignUpComponent } from 'src/app/shared/sign-up/sign-up.component';
 import { LandingComponent } from './landing.component';
 
@@ -21,7 +22,12 @@ export const routes: Routes = [
       {
         path: 'cadastrar',
         component: SignUpComponent,
-        data: { title: 'Login' }
+        data: { title: 'Cadastrar' }
+      },
+      {
+        path: 'recuperar-senha/:token',
+        component: PasswordRecoveryComponent,
+        data: { title: 'Recuperar Senha' }
       }
   ]
   },

@@ -43,6 +43,15 @@ export class AuthService {
       }));
   }
 
+  resetPassword(token: String, password: string) : Observable<any> {
+    return this.httpClient.post<any>(`${Constants.BASE_URL}reset`, 
+    JSON.stringify({ token: token, password: password }), {headers: this.getHeaders()}).pipe(
+      map((response: Response) => {
+        const resp: any = response.data;
+        return resp
+      }));
+  }
+
   redirectToLogin(){
     this.router.navigate([Views.login.url])
   }
