@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoginService } from './services/views/login.service';
+import { AuthService } from './services/views/auth.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth/auth.interceptor';
 import { ArtifactService } from './services/views/artifact.service';
@@ -32,6 +32,7 @@ import { getPtPaginatorIntl } from './util/pt-paginator-intl';
 import { ArtifactPageComponent } from './shared/artifact-page/artifact-page.component';
 import { CommentService } from './services/views/comment.service';
 import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -64,13 +65,14 @@ import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/mater
     MatDialogModule,
     MaterialFileInputModule,
     MatSnackBarModule,
+    MatExpansionModule,
     HttpClientModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: MatPaginatorIntl, useValue: getPtPaginatorIntl()},
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 5000}},
-    LoginService,
+    AuthService,
     ArtifactService,
     CommentService,
     SubjectService

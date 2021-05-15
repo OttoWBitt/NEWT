@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { Views } from 'src/app/util/views.enum';
 
 @Injectable()
-export class LoginService {
+export class AuthService {
 
   constructor(
     private router: Router,
@@ -23,6 +23,14 @@ export class LoginService {
       map((response: any) => {
         const user = response;
         return user;
+      }));
+  }
+
+  recoverPassword(email: String) : Observable<any> {
+    return this.httpClient.post<any>(`${Constants.BASE_URL}recover/${email}`, {headers: this.getHeaders()}).pipe(
+      map((response: Response) => {
+        const resp: any = response.data;
+        return resp
       }));
   }
 

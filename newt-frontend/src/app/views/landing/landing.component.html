@@ -16,7 +16,23 @@
                 <button mat-raised-button type="submit" color="primary">ENTRAR</button>
             </div>
         </form>
-        <a (click)="passwordRecovery()">Esqueci minha senha</a>
+        <!-- <a (click)="passwordRecovery()">Esqueci minha senha</a> -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header >
+              <mat-panel-title>
+                Esqueci minha senha
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <form [formGroup]="recoverForm" (ngSubmit)="recoverPassword()">
+                <div fxLayout="column" fxLayoutGap="15px">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Email cadastrado</mat-label>
+                        <input matInput type="email" formControlName="email" placeholder="Ex. uai@pucminas.br">
+                    </mat-form-field>
+                    <button mat-raised-button type="submit" color="primary">RECUPERAR SENHA</button>
+                </div>
+            </form>
+        </mat-expansion-panel>
         <mat-divider></mat-divider>
         <button mat-stroked-button color="primary">REGISTRAR</button>
     </div>
