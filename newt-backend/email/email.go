@@ -7,7 +7,7 @@ import (
 	gomail "gopkg.in/mail.v2"
 )
 
-func SendEmail(id string, email string) error {
+func SendEmail(tokenRec string, email string) error {
 	m := gomail.NewMessage()
 
 	emailAcc := "newtrecovery@gmail.com"
@@ -21,9 +21,10 @@ func SendEmail(id string, email string) error {
 	// Set E-Mail subject
 	m.SetHeader("Subject", "NEWT Password recovery")
 
-	baseRecoverURL := "http://newt.ottobittencourt.com:3001/reset"
-	var text string = "Por favor, use o codigo '%s' para poder resetar sua senha em %s"
-	recover := fmt.Sprintf(text, id, baseRecoverURL)
+	baseRecoverURL := "http://newt.ottobittencourt.com:4200/reset/%s"
+	recoverURL := fmt.Sprintf(baseRecoverURL, tokenRec)
+	var text string = "Para recuperar sua senha, entre em %s"
+	recover := fmt.Sprintf(text, recoverURL)
 
 	// Set E-Mail body. You can set plain text or html with text/html
 	m.SetBody("text/plain", recover)
