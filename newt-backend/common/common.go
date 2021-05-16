@@ -124,6 +124,8 @@ func RenderResponse(res http.ResponseWriter, message *string, statusCode int) {
 		return
 	}
 	res.WriteHeader(statusCode)
+	fmt.Println(statusCode)
+	fmt.Println(*message)
 	generateJSON := map[string]interface{}{
 		"data":   nil,
 		"errors": message,

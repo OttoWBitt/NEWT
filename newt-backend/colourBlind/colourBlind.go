@@ -311,6 +311,25 @@ func FetchTestsByUserID(res http.ResponseWriter, req *http.Request) {
 		"data": returnTes,
 	}
 
+	if len(returnTes) == 0 {
+		generateJSON = map[string]interface{}{
+			"data": []ReturnTests{
+				{
+					Id: 0,
+					User: common.UserInfo{
+						Id:       0,
+						UserName: "",
+						Name:     "",
+						Email:    "",
+					},
+					Points:                0,
+					Date:                  "",
+					IsProbablyColourBlind: false,
+				},
+			},
+		}
+	}
+
 	jsonData, err := json.Marshal(generateJSON)
 
 	if err != nil {
