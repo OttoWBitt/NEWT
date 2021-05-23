@@ -1,29 +1,26 @@
-FROM node:13.3.0 as builder
 
-ARG PROFILE
-ENV PROFILE=${PROFILE:-prod}
+# Stage 1: Compile and Build angular codebase
 
-USER node
-WORKDIR /home/node
+# Use official node image as the base image
+FROM node:latest as build
 
-COPY package*.json ./
+# Set the working directory
+WORKDIR /usr/local/app
+
+# Add the source code to app
+COPY ./ /usr/local/app/
+
+# Install all the dependencies
 RUN npm install
 
-COPY . .
+# Generate the build of the application
+RUN npm run build
 
-RUN npm run build -- --configuration ${PROFILE}
 
-FROM nginx:1.16.1-alpine
+# Stage 2: Serve app with nginx server
 
-RUN rm -rf /usr/share/nginx/html/*
-RUN rm /etc/nginx/conf.d/default.conf
+# Use official nginx image as the base image
+FROM nginx:latest
 
-COPY ./nginx-conf/nginx.conf.template /etc/nginx/conf.d/nginx.conf.template
-
-COPY --from=builder /home/node/dist/web-nbz /usr/share/nginx/html
-
-COPY entrypoint.sh /
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
+# Copy the build output to replace the default nginx contents.
+COPY --from=build /usr/local/app/dist/newt-frontend /usr/share/nginx/html
