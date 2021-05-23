@@ -25,12 +25,3 @@ a {
     text-align: center;
 }
 
-.mat-expansion-panel{
-    box-shadow: none;
-    background: none;
-    
-}
-
-::ng-deep .mat-expansion-panel-body{
-    padding: 0 !important;
-}

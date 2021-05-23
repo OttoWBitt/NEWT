@@ -1,1 +1,94 @@
-<p>artifacts works!</p>
+<div class="containter">
+  <mat-card>
+    <mat-card-header>
+      <div fxLayout="row" fxLayoutAlign="space-between center" fxFlex>
+        <div fxLayout="row " fxLayoutAlign="center" fxLayoutGap="15px">
+          <span class="title">Artefatos</span>
+          <button mat-mini-fab color="primary" (click)="addArtifact()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <div fxLayout="row" fxLayoutGap="15px">
+          <mat-form-field appearance="outline">
+            <mat-label>Busca</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Artigo Jedai">
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Assunto</mat-label>
+            <mat-select multiple (selectionChange)="filterSubject($event.value)">
+              <mat-option *ngFor="let subject of subjects" [value]="subject.id">{{subject.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource">
+  
+          <!-- Name Column -->
+          <ng-container mat-sort-header matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Nome </th>
+            <td mat-cell *matCellDef="let element"><a (click)="selectArtifact(element)">{{element.name}}</a></td>
+          </ng-container>
+  
+          <!-- Comments Column -->
+          <ng-container matColumnDef="comments">
+            <th mat-header-cell *matHeaderCellDef> Comentários </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button (click)="selectArtifact(element)">
+                <mat-icon>chat</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+  
+          <!-- Subject Column -->
+          <ng-container matColumnDef="subject">
+            <th mat-header-cell *matHeaderCellDef> Assunto </th>
+            <td mat-cell *matCellDef="let element"> {{element.subject.name}} </td>
+          </ng-container>
+  
+          <!-- Description Column -->
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> Descrição </th>
+            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+          </ng-container>
+  
+          <!-- Username Column -->
+          <ng-container matColumnDef="username">
+            <th mat-header-cell *matHeaderCellDef> Usuário </th>
+            <td mat-cell *matCellDef="let element"> {{element.user.username}} </td>
+          </ng-container>
+  
+          <!-- Link Column -->
+          <ng-container matColumnDef="link">
+            <th mat-header-cell *matHeaderCellDef> Link </th>
+            <td mat-cell *matCellDef="let element"> 
+              <button mat-icon-button disabled="{{element.link ? 'false' : 'true'}}" (click)="goToUrl(element.link)">
+                <mat-icon>open_in_new</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Download Column -->
+          <ng-container matColumnDef="download">
+            <th mat-header-cell *matHeaderCellDef> Download </th>
+            <td mat-cell *matCellDef="let element"> 
+              <button mat-icon-button disabled="{{element.downloadLink ? 'false' : 'true'}}" (click)="goToUrl(element.downloadLink)">
+                <mat-icon>file_download</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+  
+        <mat-paginator [pageSizeOptions]="[10, 15]" showFirstLastButtons></mat-paginator>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="end center">
+      </div>  
+    </mat-card-content>
+  </mat-card>
+</div>

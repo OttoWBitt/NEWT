@@ -1,0 +1,31 @@
+<div class="container" fxLayout fxLayoutAlign="space-around center">
+    <div class="panel" fxLayout="column" fxLayoutGap="15px">
+        <span class="title">
+            NEWT
+        </span>
+        <form [formGroup]="signUpForm" (ngSubmit)="signUp()">
+            <div fxLayout="column" fxLayoutGap="15px">
+                <mat-form-field appearance="outline">
+                    <mat-label>Nome</mat-label>
+                    <input matInput formControlName="name">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Usuário</mat-label>
+                    <input matInput formControlName="username">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="email" formControlName="email">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Senha</mat-label>
+                    <input matInput type="password" formControlName="password">
+                </mat-form-field>
+                <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="15px">
+                    <button mat-stroked-button (click)="goToHome()" color="primary" fxFlex>VOLTAR</button>
+                    <button mat-raised-button type="submit" color="primary" fxFlex>REGISTRAR</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

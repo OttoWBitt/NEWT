@@ -9,7 +9,6 @@ import { tap } from 'rxjs/operators';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Adiciona a autorização (jwt Token)  no cabeçalho caso o usuário já tenha se autenticado
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -23,16 +22,19 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     return next.handle(request).pipe(tap((ev: HttpEvent<any>) => {
+      let authRoute = request.url.endsWith('/login') || request.url.endsWith('/signup') || request.url.endsWith('/reset')
       if (ev instanceof HttpResponse) {
-        if (request.url.endsWith('/signin') && request.method === 'POST' && ev.body && ev.body.data) {
-          localStorage.setItem('currentUser', JSON.stringify(ev.body.data));
-        } else if (request.url.indexOf('refresh-token') != -1 && ev.body.data){
-          localStorage.setItem('currentUser', JSON.stringify(ev.body.data));
+        if (authRoute && request.method === 'POST' && ev.body) {
+          localStorage.setItem('currentUser', JSON.stringify(ev.body));
         }
       }
     }, (error: any) => {
       if (error instanceof HttpErrorResponse) {
-        return throwError(error.error.erros[0]);
+        if (error.error.errors && error.error.errors.includes('token is expired')) {
+          localStorage.clear()
+          window.location.reload()
+        }
+        return throwError(error.error.errors);
       }
     }
     ));

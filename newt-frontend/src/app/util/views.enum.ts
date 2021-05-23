@@ -5,4 +5,20 @@ export class Views{
         url: 'artefatos'
     };
 
+    public static artifact = {
+        name: 'Artefato',
+        url: 'artefato/:id',
+        navigate: 'artefato'
+    };
+
+    public static login = {
+        name: 'Login',
+        url: 'login'
+    };
+
+    public static signUp = {
+        name: 'Cadastrar',
+        url: 'cadastrar'
+    };
+
 }
