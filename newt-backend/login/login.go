@@ -438,7 +438,7 @@ func SignupWithEmail(res http.ResponseWriter, req *http.Request) {
 		common.RenderResponse(res, &erro, http.StatusInternalServerError)
 		return
 	default:
-		erro := err.Error()
+		erro := "User already exist."
 		common.RenderResponse(res, &erro, http.StatusMovedPermanently)
 	}
 
